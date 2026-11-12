@@ -1,0 +1,44 @@
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.secret
+secrets/
+
+# Python virtual environments & caches
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime SQLite databases & logs
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.sqlite
+data/*.sqlite3
+*.log
+logs/
+
+# Temporary, scratch & backup directories
+*.tmp
+*.temp
+*.bak
+tmp/
+temp/
+scratch/
+backup_*/
+
+# IDE & OS artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

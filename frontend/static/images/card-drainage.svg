@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="60%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </linearGradient>
+    <linearGradient id="grassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </linearGradient>
+    <linearGradient id="concreteWall" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="50%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+    <radialGradient id="pipeInner" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#020817"/>
+      <stop offset="70%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </radialGradient>
+    <linearGradient id="waterStream" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="30%" stop-color="#38bdf8"/>
+      <stop offset="70%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="channelWater" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="400" height="260" fill="url(#skyGrad)"/>
+
+  <!-- Embankment Green Slopes -->
+  <polygon points="0,60 400,60 400,110 0,110" fill="url(#grassGrad)"/>
+  <!-- Trees / Foliage on Top -->
+  <circle cx="40" cy="55" r="18" fill="#15803d"/>
+  <circle cx="75" cy="50" r="22" fill="#166534"/>
+  <circle cx="120" cy="54" r="20" fill="#15803d"/>
+  <circle cx="280" cy="52" r="22" fill="#166534"/>
+  <circle cx="330" cy="50" r="24" fill="#15803d"/>
+  <circle cx="370" cy="55" r="18" fill="#166534"/>
+
+  <!-- Headwall Concrete Structure -->
+  <polygon points="40,95 360,95 380,180 20,180" fill="url(#concreteWall)"/>
+  <!-- Wall Coping Slab -->
+  <rect x="35" y="90" width="330" height="12" rx="2" fill="#cbd5e1" stroke="#64748b" stroke-width="1"/>
+
+  <!-- Pipe Culvert 1 (Left) -->
+  <g transform="translate(140, 140)">
+    <!-- Pipe Rim -->
+    <ellipse cx="0" cy="0" rx="42" ry="42" fill="#475569" stroke="#94a3b8" stroke-width="4"/>
+    <ellipse cx="0" cy="0" rx="36" ry="36" fill="url(#pipeInner)"/>
+    <!-- Water Inside Pipe -->
+    <path d="M -35 10 Q 0 5, 35 10 C 35 30, -35 30, -35 10 Z" fill="#0284c7"/>
+    <path d="M -30 15 Q 0 10, 30 15 C 30 32, -30 32, -30 15 Z" fill="#bae6fd" opacity="0.8"/>
+  </g>
+
+  <!-- Pipe Culvert 2 (Right) -->
+  <g transform="translate(260, 140)">
+    <!-- Pipe Rim -->
+    <ellipse cx="0" cy="0" rx="42" ry="42" fill="#475569" stroke="#94a3b8" stroke-width="4"/>
+    <ellipse cx="0" cy="0" rx="36" ry="36" fill="url(#pipeInner)"/>
+    <!-- Water Inside Pipe -->
+    <path d="M -35 10 Q 0 5, 35 10 C 35 30, -35 30, -35 10 Z" fill="#0284c7"/>
+    <path d="M -30 15 Q 0 10, 30 15 C 30 32, -30 32, -30 15 Z" fill="#bae6fd" opacity="0.8"/>
+  </g>
+
+  <!-- Water Discharge Cascade from Left Pipe -->
+  <path d="M 108 152 Q 95 185, 80 220 L 195 220 Q 172 185, 172 152 Z" fill="url(#waterStream)"/>
+  <!-- Foam/Ripples Left -->
+  <path d="M 85 200 C 105 190, 125 205, 150 195 C 165 200, 185 192, 195 202" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.85"/>
+  <path d="M 90 212 C 115 206, 140 215, 165 208 C 180 213, 190 207, 200 214" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9"/>
+
+  <!-- Water Discharge Cascade from Right Pipe -->
+  <path d="M 228 152 Q 220 185, 205 220 L 320 220 Q 292 185, 292 152 Z" fill="url(#waterStream)"/>
+  <!-- Foam/Ripples Right -->
+  <path d="M 215 200 C 235 190, 255 205, 280 195 C 295 200, 310 192, 320 202" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.85"/>
+
+  <!-- Receiving Drainage Channel Water Surface -->
+  <rect x="0" y="215" width="400" height="45" fill="url(#channelWater)"/>
+  <path d="M 0 218 Q 100 215, 200 218 T 400 218" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.8"/>
+  <path d="M 0 230 Q 100 227, 200 230 T 400 230" stroke="#bae6fd" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <path d="M 0 242 Q 100 240, 200 242 T 400 242" stroke="#7dd3fc" stroke-width="1.5" fill="none" opacity="0.5"/>
+</svg>
+

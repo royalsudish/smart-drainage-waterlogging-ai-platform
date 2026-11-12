@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
+  <defs>
+    <radialGradient id="spaceGrad" cx="70%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#0a2a5e"/>
+      <stop offset="60%" stop-color="#04142e"/>
+      <stop offset="100%" stop-color="#020817"/>
+    </radialGradient>
+    <radialGradient id="earthGrad" cx="30%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="35%" stop-color="#0284c7"/>
+      <stop offset="70%" stop-color="#034078"/>
+      <stop offset="100%" stop-color="#021c38"/>
+    </radialGradient>
+    <linearGradient id="solarGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="50%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="scanBeam" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#00f0ff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glowSat" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Deep Space Backdrop -->
+  <rect width="400" height="260" fill="url(#spaceGrad)"/>
+
+  <!-- Stars -->
+  <g fill="#ffffff" opacity="0.7">
+    <circle cx="35" cy="40" r="1"/>
+    <circle cx="95" cy="25" r="1.5"/>
+    <circle cx="160" cy="50" r="0.8"/>
+    <circle cx="280" cy="30" r="1.2"/>
+    <circle cx="340" cy="65" r="1"/>
+    <circle cx="370" cy="20" r="1.5"/>
+    <circle cx="70" cy="110" r="0.8"/>
+    <circle cx="310" cy="115" r="1"/>
+    <circle cx="240" cy="75" r="1"/>
+  </g>
+
+  <!-- Earth Limb Curve at Bottom -->
+  <path d="M -50 320 C 100 160, 300 160, 450 320 L 450 350 L -50 350 Z" fill="url(#earthGrad)"/>
+  
+  <!-- Atmosphere Rim Glow -->
+  <path d="M -50 320 C 100 160, 300 160, 450 320" stroke="#00f0ff" stroke-width="4" stroke-opacity="0.85" filter="url(#glowSat)"/>
+  <path d="M -50 320 C 100 160, 300 160, 450 320" stroke="#38bdf8" stroke-width="8" stroke-opacity="0.35"/>
+
+  <!-- Continental Landmasses on Earth Curve -->
+  <path d="M 60 250 C 90 230, 130 225, 170 240 C 180 235, 210 245, 240 235 C 270 245, 300 230, 330 255" 
+        stroke="#10b981" stroke-width="8" stroke-linecap="round" stroke-opacity="0.6"/>
+
+  <!-- Orbital Track Line -->
+  <path d="M 40 80 Q 200 140, 360 210" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="6 4" stroke-opacity="0.6"/>
+
+  <!-- Sensor Scan Cone from Satellite to Earth -->
+  <polygon points="200,85 100,240 300,240" fill="url(#scanBeam)"/>
+  <ellipse cx="200" cy="240" rx="100" ry="20" stroke="#00f0ff" stroke-width="1.5" stroke-opacity="0.7" fill="#00f0ff" fill-opacity="0.1"/>
+
+  <!-- 3D Satellite Model -->
+  <g transform="translate(190, 70) rotate(-15)">
+    <!-- Left Solar Array -->
+    <rect x="-85" y="-18" width="60" height="36" rx="2" fill="url(#solarGrad)" stroke="#7dd3fc" stroke-width="1.5"/>
+    <!-- Solar Cell Grid Lines -->
+    <line x1="-70" y1="-18" x2="-70" y2="18" stroke="#38bdf8" stroke-width="1"/>
+    <line x1="-55" y1="-18" x2="-55" y2="18" stroke="#38bdf8" stroke-width="1"/>
+    <line x1="-40" y1="-18" x2="-40" y2="18" stroke="#38bdf8" stroke-width="1"/>
+    <line x1="-85" y1="0" x2="-25" y2="0" stroke="#38bdf8" stroke-width="1"/>
+    <!-- Left Boom Arm -->
+    <line x1="-25" y1="0" x2="-12" y2="0" stroke="#94a3b8" stroke-width="3"/>
+
+    <!-- Satellite Chassis Body -->
+    <rect x="-14" y="-16" width="28" height="32" rx="3" fill="#e2e8f0" stroke="#0284c7" stroke-width="2"/>
+    <rect x="-10" y="-12" width="20" height="10" fill="#f59e0b" opacity="0.9"/>
+    <rect x="-10" y="2" width="20" height="10" fill="#0284c7" opacity="0.8"/>
+    <!-- Instruments & Antenna -->
+    <circle cx="0" cy="0" r="3" fill="#00f0ff"/>
+    <line x1="0" y1="16" x2="0" y2="28" stroke="#7dd3fc" stroke-width="2"/>
+    <polygon points="0,28 -6,34 6,34" fill="#38bdf8"/>
+
+    <!-- Right Boom Arm -->
+    <line x1="14" y1="0" x2="25" y2="0" stroke="#94a3b8" stroke-width="3"/>
+    <!-- Right Solar Array -->
+    <rect x="25" y="-18" width="60" height="36" rx="2" fill="url(#solarGrad)" stroke="#7dd3fc" stroke-width="1.5"/>
+    <line x1="40" y1="-18" x2="40" y2="18" stroke="#38bdf8" stroke-width="1"/>
+    <line x1="55" y1="-18" x2="55" y2="18" stroke="#38bdf8" stroke-width="1"/>
+    <line x1="70" y1="-18" x2="70" y2="18" stroke="#38bdf8" stroke-width="1"/>
+    <line x1="25" y1="0" x2="85" y2="0" stroke="#38bdf8" stroke-width="1"/>
+  </g>
+</svg>
+

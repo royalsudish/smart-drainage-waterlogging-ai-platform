@@ -1,0 +1,2098 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Drainage & Waterlogging – Early-Warning System | GMC Command Center</title>
+  <meta name="description" content="AI/ML & Satellite GIS Early-Warning System for Urban Drainage Congestion & Waterlogging Inundation Prediction.">
+  
+  <!-- Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet GIS Map CSS -->
+  <link rel="stylesheet" href="/static/css/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  
+  <!-- Design System CSS (Matching Reference UI) -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="app-viewport">
+    
+    <!-- ======================================================================
+         1. TOP HEADER SECTION
+         ====================================================================== -->
+    <header class="header-bar">
+      <!-- Project Brand (Water droplet + City + Waves Logo) -->
+      <a href="#home" class="brand-wrapper" title="Smart Drainage & Waterlogging Early-Warning System">
+        <img src="/static/images/logo.svg" alt="Project Logo" class="brand-logo-img">
+        <div class="brand-text-col">
+          <span class="brand-title">Smart Drainage & Waterlogging</span>
+          <span class="brand-subtitle">Early-Warning System</span>
+        </div>
+      </a>
+
+      <!-- Header Right Widgets -->
+      <div class="header-actions">
+        <!-- Dual State & District Location Dropdown Selectors (Matching Reference UI) -->
+        <div class="header-dual-location">
+          <div class="header-dropdown-pill" title="State Coverage">
+            <svg class="pill-icon-pin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <select id="headerStateSelect" title="Select State">
+              <option value="Andhra Pradesh" selected>Andhra Pradesh</option>
+            </select>
+          </div>
+          <div class="header-dropdown-pill" title="Select District">
+            <svg class="pill-icon-pin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <select id="headerDistrictSelect" title="Select District">
+              <!-- Populated dynamically with all 26 AP districts, Guntur selected -->
+              <option value="Guntur" selected>Guntur District</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Date & Time Display Widget (Matching Reference UI) -->
+        <div class="datetime-widget">
+          <svg class="cal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <circle cx="8" cy="14" r="1" fill="currentColor"></circle>
+            <circle cx="12" cy="14" r="1" fill="currentColor"></circle>
+            <circle cx="16" cy="14" r="1" fill="currentColor"></circle>
+            <circle cx="8" cy="18" r="1" fill="currentColor"></circle>
+            <circle cx="12" cy="18" r="1" fill="currentColor"></circle>
+          </svg>
+          <div class="datetime-text">
+            <span id="headerDateLine" class="date-line">28 Sep 2026</span>
+            <span id="headerTimeLine" class="time-line">09:45 PM IST</span>
+          </div>
+        </div>
+
+        <!-- User Profile Circle -->
+        <button class="profile-btn" id="headerProfileBtn" type="button" aria-label="User Profile" title="Municipal Administrator">
+          <svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         2. APPLICATION BODY: SIDEBAR + CONTENT
+         ====================================================================== -->
+    <div class="app-body">
+      
+      <!-- Left Sidebar Navigation (5 items: Command Center, Home, Location, Drainage, Waterlogging) -->
+      <aside class="sidebar-nav">
+        <ul class="nav-menu-list">
+          <!-- 1. Command Center (Active Style) -->
+          <li>
+            <a href="#commandcenter" class="nav-item-link active" data-page="commandcenter" title="Command Center">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+              <span>Command Center</span>
+            </a>
+          </li>
+
+          <!-- 2. Home -->
+          <li>
+            <a href="#home" class="nav-item-link" data-page="home" title="Home Dashboard">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Home</span>
+            </a>
+          </li>
+
+          <!-- 2. Location -->
+          <li>
+            <a href="#location" class="nav-item-link" data-page="location" title="GMC Boundary & Wards Map">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>Location</span>
+            </a>
+          </li>
+
+          <!-- 3. Drainage -->
+          <li>
+            <a href="#drainage" class="nav-item-link" data-page="drainage" title="Drainage Network & Infrastructure">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+                <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+                <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+              </svg>
+              <span>Drainage</span>
+            </a>
+          </li>
+
+          <!-- 4. Waterlogging -->
+          <li>
+            <a href="#waterlogging" class="nav-item-link" data-page="waterlogging" title="Satellite Waterlogging Hotspots & Risk Prediction">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+              </svg>
+              <span>Waterlogging</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Safe Andhra Environmental Badge -->
+        <div class="sidebar-safe-andhra-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12A10 10 0 0 1 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          <span>Safe Andhra &bull; Water Secure Future</span>
+        </div>
+
+        <!-- Waterlogging Sidebar Telemetry Card (Matching Reference Screenshot) -->
+        <div class="sidebar-telemetry-box" id="sidebarWaterloggingBox" style="display: none;">
+          <div class="sidebar-box-title">Estimated Risk &amp; Depth</div>
+          <div class="sidebar-box-metric">
+            <span class="box-label">Active Waterlogged</span>
+            <span class="box-value-highlight" id="sidebarActiveArea">-- km²</span>
+          </div>
+          <div class="sidebar-box-metric">
+            <span class="box-label">Max Stagnation</span>
+            <span class="box-value-highlight" id="sidebarMaxStagnation">-- cm</span>
+          </div>
+          <button class="btn-sidebar-action" id="btnBackToOverview" type="button">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            BACK TO STATE OVERVIEW
+          </button>
+          <button class="btn-sidebar-emergency" id="btnEmergencyAlerts" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            EMERGENCY CONTACTS &amp; ALERTS
+          </button>
+        </div>
+
+        <!-- Bottom Left City Skyline Artwork with Curved Wave (Matching Reference Image) -->
+        <div class="sidebar-footer-artwork">
+          <img src="/static/images/sidebar-city.svg" alt="Urban Skyline with Water Reflection" class="sidebar-city-img">
+        </div>
+      </aside>
+
+      <!-- Viewport Content Area -->
+      <main class="content-area">
+
+        <!-- ==================================================================
+             PAGE 0: COMMAND CENTER (Matching Reference UI Screenshot)
+             ================================================================== -->
+        <section id="commandcenterPage" class="view-page active-page">
+          <div class="commandcenter-container home-hero-container">
+            
+            <!-- Left Hero Content Column -->
+            <div class="hero-content-col">
+              <h1 class="hero-main-title">
+                Smart Drainage &amp;
+                <span class="hero-highlight-word">Waterlogging</span>
+              </h1>
+              <p class="hero-subtitle">
+                Monitor, Analyze and Predict Risks Using Satellite Data and AI
+              </p>
+
+              <!-- 4 Feature Cards Grid -->
+              <div class="feature-cards-grid">
+                <!-- Card 1: Satellite Monitoring -->
+                <div class="feature-card" id="cardSatellite" role="button" tabindex="0" title="Open Satellite Monitoring in Waterlogging View">
+                  <div class="card-visual-frame">
+                    <img src="/static/images/card-satellite.svg" alt="Satellite Monitoring" class="card-img-preview" loading="lazy">
+                  </div>
+                  <div class="card-body-frame">
+                    <span class="card-name-title">Satellite<br>Monitoring</span>
+                    <div class="card-circle-arrow">
+                      <svg class="arrow-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card 2: Drainage Analysis -->
+                <div class="feature-card" id="cardDrainage" role="button" tabindex="0" title="Open GMC Drainage Network Dashboard">
+                  <div class="card-visual-frame">
+                    <img src="/static/images/card-drainage.svg" alt="Drainage Analysis" class="card-img-preview" loading="lazy">
+                  </div>
+                  <div class="card-body-frame">
+                    <span class="card-name-title">Drainage<br>Analysis</span>
+                    <div class="card-circle-arrow">
+                      <svg class="arrow-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card 3: Waterlogging Analysis -->
+                <div class="feature-card" id="cardWaterlogging" role="button" tabindex="0" title="Open Waterlogging &amp; Gravity Predictions">
+                  <div class="card-visual-frame">
+                    <img src="/static/images/card-waterlogging.svg" alt="Waterlogging Analysis" class="card-img-preview" loading="lazy">
+                  </div>
+                  <div class="card-body-frame">
+                    <span class="card-name-title">Waterlogging<br>Analysis</span>
+                    <div class="card-circle-arrow">
+                      <svg class="arrow-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card 4: Risk Prediction & Alerts -->
+                <div class="feature-card" id="cardRisk" role="button" tabindex="0" title="Run AI Risk Prediction Model">
+                  <div class="card-visual-frame">
+                    <img src="/static/images/card-risk.svg" alt="Risk Prediction &amp; Alerts" class="card-img-preview" loading="lazy">
+                  </div>
+                  <div class="card-body-frame">
+                    <span class="card-name-title">Risk Prediction<br>&amp; Alerts</span>
+                    <div class="card-circle-arrow">
+                      <svg class="arrow-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Call To Action Button -->
+              <div class="cta-button-row">
+                <button type="button" class="btn-start-analysis" id="startAnalysisBtn">
+                  <span class="btn-play-badge">
+                    <svg class="play-triangle-icon" viewBox="0 0 24 24">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                  </span>
+                  <span>Start Analysis</span>
+                  <svg class="btn-right-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Hero: 3D Earth Globe Canvas & Floating Marker -->
+            <div class="hero-globe-col">
+              <div id="earthGlobeContainer"></div>
+              
+              <!-- Floating Guntur Pin Label Tag -->
+              <div class="floating-guntur-pill" id="gunturFloatingTag">
+                <svg class="guntur-pill-pin" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+                </svg>
+                <span>Guntur</span>
+              </div>
+            </div>
+
+            <!-- Background Scenic Landscape underneath Hero -->
+            <div class="hero-scenic-backdrop">
+              <img src="/static/images/hero-landscape.svg" alt="Scenic Landscape Backdrop" class="scenic-landscape-img">
+            </div>
+
+            <!-- Bottom Information Status Panel -->
+            <div class="bottom-status-panel">
+              <!-- Metric 1: Waterlogging Risk Level -->
+              <div class="status-metric-col">
+                <div class="status-icon-frame blue-glow">
+                  <svg class="status-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                  </svg>
+                </div>
+                <div class="status-details-stack">
+                  <span class="status-metric-label">Waterlogging Risk Level</span>
+                  <div class="badge-status-pill pill-low" id="ccRiskLevelVal">
+                    <span class="pulse-dot"></span>
+                    <span id="ccRiskText">Low</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Metric 2: 24h Rainfall -->
+              <div class="status-metric-col">
+                <div class="status-icon-frame blue-glow">
+                  <svg class="status-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path>
+                    <line x1="8" y1="19" x2="8" y2="21"></line>
+                    <line x1="12" y1="19" x2="12" y2="21"></line>
+                    <line x1="16" y1="19" x2="16" y2="21"></line>
+                  </svg>
+                </div>
+                <div class="status-details-stack">
+                  <span class="status-metric-label">24h Rainfall (Est.)</span>
+                  <span class="status-metric-value" id="ccRainfallVal">42 mm</span>
+                </div>
+              </div>
+
+              <!-- Metric 3: Drainage Status -->
+              <div class="status-metric-col">
+                <div class="status-icon-frame green-glow">
+                  <svg class="status-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M9 12l2 2 4-4"></path>
+                  </svg>
+                </div>
+                <div class="status-details-stack">
+                  <span class="status-metric-label">Drainage Status</span>
+                  <span class="status-metric-value val-green" id="ccDrainageVal">Normal</span>
+                </div>
+              </div>
+
+              <!-- Metric 4: Coverage -->
+              <div class="status-metric-col">
+                <div class="status-icon-frame blue-glow">
+                  <svg class="status-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                </div>
+                <div class="status-details-stack">
+                  <span class="status-metric-label">Coverage</span>
+                  <span class="status-metric-value" id="ccCoverageVal">GMC - 57 Wards</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             PAGE 1: HOME DASHBOARD (Matching Reference UI Hero Section)
+             ================================================================== -->
+        <section id="homePage" class="view-page">
+          <div class="ap-home-dashboard">
+            
+            <!-- 1. Top Title Bar Row (Matching Reference Screenshot) -->
+            <div class="ap-title-bar">
+              <h1 class="ap-hero-title">
+                <span id="homeHeroStateName">Andhra Pradesh</span> Water Storage,<br>
+                <span class="ap-title-sub">Waterlogging &amp; Drainage Intelligence</span>
+              </h1>
+              <div class="ap-slogan-wrap">
+                <span class="ap-slogan-text">Monitor &bull; Analyze &bull; Predict &bull; Protect</span>
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="1.8">
+                  <path d="M3 20h18M5 20V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v11M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 14h6M9 17h6"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- 2. Top 4 KPI Metric Cards (Matching Screenshot) -->
+            <div class="ap-kpi-grid">
+              <!-- Card 1: Waterlogged Area -->
+              <div class="ap-kpi-card" id="kpiCardWaterlogged" title="Satellite SAR & Optical Surface Waterlogging Extent">
+                <div class="kpi-icon-wrap icon-waterlogged">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+                    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+                    <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+                  </svg>
+                </div>
+                <div class="kpi-data-col">
+                  <span class="kpi-label">Waterlogged Area</span>
+                  <div class="kpi-value-row">
+                    <span class="kpi-val" id="kpiWaterloggedVal">-- km²</span>
+                  </div>
+                  <span class="kpi-trend" id="kpiWaterloggedTrend">Live API</span>
+                </div>
+              </div>
+
+              <!-- Card 2: Estimated Water Storage -->
+              <div class="ap-kpi-card" id="kpiCardStorage" title="Hydraulic Surface & Reservoir Storage Volume">
+                <div class="kpi-icon-wrap icon-storage">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                  </svg>
+                </div>
+                <div class="kpi-data-col">
+                  <span class="kpi-label">Estimated Water Storage</span>
+                  <div class="kpi-value-row">
+                    <span class="kpi-val" id="kpiStorageVal">-- MCM</span>
+                  </div>
+                  <span class="kpi-trend" id="kpiStorageTrend">Live API</span>
+                </div>
+              </div>
+
+              <!-- Card 3: Drainage Outflow -->
+              <div class="ap-kpi-card" id="kpiCardOutflow" title="Active River, Canal & Drainage Network Outflow Rate">
+                <div class="kpi-icon-wrap icon-outflow">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                </div>
+                <div class="kpi-data-col">
+                  <span class="kpi-label">Drainage Outflow</span>
+                  <div class="kpi-value-row">
+                    <span class="kpi-val" id="kpiOutflowVal">-- m³/s</span>
+                  </div>
+                  <span class="kpi-trend" id="kpiOutflowTrend">Live API</span>
+                </div>
+              </div>
+
+              <!-- Card 4: Rainfall (24h) -->
+              <div class="ap-kpi-card" id="kpiCardRainfall" title="24-Hour Precipitation Accumulation & Forecast">
+                <div class="kpi-icon-wrap icon-rain">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"></path>
+                    <line x1="8" y1="19" x2="8" y2="21"></line>
+                    <line x1="8" y1="13" x2="8" y2="15"></line>
+                    <line x1="16" y1="19" x2="16" y2="21"></line>
+                    <line x1="16" y1="13" x2="16" y2="15"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="12" y1="15" x2="12" y2="17"></line>
+                  </svg>
+                </div>
+                <div class="kpi-data-col">
+                  <span class="kpi-label">Rainfall (24h)</span>
+                  <div class="kpi-value-row">
+                    <span class="kpi-val" id="kpiRainfallVal">-- mm</span>
+                  </div>
+                  <span class="kpi-subtext" id="kpiForecastVal">Forecast: -- mm</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Middle 3-Column Grid (Select Location | Map | Ward ML Risk Inspector) -->
+            <div class="ap-middle-grid">
+              
+              <!-- Column 1: Select Location Subpanel -->
+              <div class="ap-panel location-select-panel">
+                <div class="panel-header-row">
+                  <svg class="panel-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <h3>Select Location</h3>
+                </div>
+
+                <!-- Hierarchical Selectors (State -> District -> City/Mandal) -->
+                <div class="hierarchical-selects">
+                  <select id="homeStateSelect" class="ap-select-input" title="State Selection">
+                    <option value="Andhra Pradesh" selected>Andhra Pradesh</option>
+                  </select>
+                  <select id="homeDistrictSelect" class="ap-select-input" title="District Selection">
+                    <!-- Populated dynamically with all 26 AP districts -->
+                    <option value="Guntur" selected>Guntur District</option>
+                  </select>
+                  <select id="homeMuniSelect" class="ap-select-input" title="Municipality / City Selection">
+                    <option value="Guntur Municipal Corporation" selected>Guntur Municipal Corporation</option>
+                  </select>
+                </div>
+
+                <!-- Ward Search Input -->
+                <div class="panel-search-wrap">
+                  <svg class="search-mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="homeWardSearchInput" placeholder="Search Ward..." class="panel-search-input" />
+                </div>
+
+                <!-- Dynamic Ward/Division Pills List (Populated from Verified Backend Data) -->
+                <div id="homeLocationStatus" class="location-status-banner" style="display:none; font-size:11px; color:#38bdf8; margin-bottom:6px; padding:4px 8px; border-radius:6px; background:rgba(0,240,255,0.08); border:1px solid rgba(0,240,255,0.22);"></div>
+                <div class="ward-pills-list" id="homeWardPillsList">
+                  <div class="ward-pill-loading" style="padding:10px; font-size:12px; color:#94a3b8; text-align:center;">
+                    Loading verified divisions...
+                  </div>
+                </div>
+
+                <!-- View All Wards Action Button -->
+                <button type="button" id="btnViewAllWards" class="btn-view-all-wards" title="Inspect Full Ward Directory">
+                  <span id="btnViewAllWardsText">View All Divisions (57)</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Column 2: Interactive High-Res Satellite & GIS Map -->
+              <div class="ap-panel map-panel-container">
+                <!-- Floating Boundary Badge -->
+                <div class="map-floating-badge" id="mapHeaderBadge">Guntur Municipal Corporation (57 Verified Wards)</div>
+                
+                <!-- Leaflet Satellite Canvas -->
+                <div id="homeSatelliteMap" class="home-satellite-canvas"></div>
+
+                <!-- Floating Map Controls -->
+                <div class="map-floating-controls">
+                  <button type="button" id="btnHomeMapZoomIn" class="btn-map-ctrl" title="Zoom In">+</button>
+                  <button type="button" id="btnHomeMapZoomOut" class="btn-map-ctrl" title="Zoom Out">&minus;</button>
+                  <button type="button" id="btnHomeMapCenter" class="btn-map-ctrl" title="Recenter on Selected Ward">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <line x1="12" y1="2" x2="12" y2="6"></line>
+                      <line x1="12" y1="18" x2="12" y2="22"></line>
+                      <line x1="2" y1="12" x2="6" y2="12"></line>
+                      <line x1="18" y1="12" x2="22" y2="12"></line>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Map Legend at Bottom Right -->
+                <div class="map-floating-legend">
+                  <div class="legend-row"><span class="legend-swatch swatch-low"></span> Low</div>
+                  <div class="legend-row"><span class="legend-swatch swatch-moderate"></span> Moderate</div>
+                  <div class="legend-row"><span class="legend-swatch swatch-high"></span> High</div>
+                  <div class="legend-row"><span class="legend-swatch swatch-severe"></span> Severe</div>
+                  <div class="legend-row"><span class="legend-swatch swatch-nodata"></span> No Data</div>
+                </div>
+              </div>
+
+              <!-- Column 3: Ward ML Risk Inspector -->
+              <div class="ap-panel ward-inspector-panel">
+                <div class="panel-header-row">
+                  <svg class="panel-chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                  <h3>Ward ML Risk Inspector</h3>
+                </div>
+
+                <div class="inspector-ward-badge-row">
+                  <span class="inspector-ward-name" id="inspWardName">Ward 12 - Vidyanagar East</span>
+                  <span class="badge-status-pill pill-low" id="inspRiskBadge">Evaluating...</span>
+                </div>
+
+                <!-- Circular Progress Gauge Matching Reference Screenshot -->
+                <div class="circular-gauge-container">
+                  <div class="gauge-svg-wrap">
+                    <svg class="risk-gauge-svg" width="130" height="130" viewBox="0 0 120 120">
+                      <circle class="gauge-bg" cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                      <circle class="gauge-progress" id="inspGaugeCircle" cx="60" cy="60" r="50" fill="none" stroke="#ef4444" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="86.6" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                    </svg>
+                    <div class="gauge-content">
+                      <span class="gauge-value" id="inspProbVal">--%</span>
+                      <span class="gauge-label">Risk Probability</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Telemetry 2x2 Grid -->
+                <div class="inspector-grid-2x2">
+                  <div class="insp-metric-cell">
+                    <span class="insp-cell-label">Waterlogged Area</span>
+                    <span class="insp-cell-val" id="inspCellArea">-- km²</span>
+                  </div>
+                  <div class="insp-metric-cell">
+                    <span class="insp-cell-label">Rainfall (24h)</span>
+                    <span class="insp-cell-val" id="inspCellRain">-- mm</span>
+                  </div>
+                  <div class="insp-metric-cell">
+                    <span class="insp-cell-label">Elevation</span>
+                    <span class="insp-cell-val" id="inspCellElev">-- m</span>
+                  </div>
+                  <div class="insp-metric-cell">
+                    <span class="insp-cell-label">Slope</span>
+                    <span class="insp-cell-val" id="inspCellSlope">--&deg;</span>
+                  </div>
+                </div>
+
+                <!-- Key Factors Checklist -->
+                <div class="inspector-factors-wrap">
+                  <div class="factors-title">Key Factors:</div>
+                  <ul class="factors-list" id="inspFactorsList">
+                    <li><span class="factor-icon">&#9888;&#65039;</span> High Rainfall</li>
+                    <li><span class="factor-icon">&#9989;</span> Low Elevation</li>
+                    <li><span class="factor-icon">&#10060;</span> Poor Drainage</li>
+                  </ul>
+                </div>
+
+                <!-- Action Alert Box -->
+                <div class="inspector-action-alert" id="inspActionAlert">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                  <div class="action-alert-text">
+                    <strong>Action:</strong> Monitor closely. Check drainage in this area.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Bottom 3-Card Grid (Trend Chart | District Overview | Data Sources) -->
+            <div class="ap-bottom-grid">
+              
+              <!-- Card 1: Ward-wise Rainfall & Waterlogging Risk Trend -->
+              <div class="ap-panel bottom-trend-panel">
+                <div class="panel-header-row justify-between">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <h3 id="homeTrendTitle">Ward-wise Rainfall &amp; Waterlogging Risk Trend</h3>
+                  </div>
+                  <div class="ap-time-tabs">
+                    <button type="button" class="btn-time-tab" data-period="6h">6h</button>
+                    <button type="button" class="btn-time-tab active" data-period="24h">24h</button>
+                    <button type="button" class="btn-time-tab" data-period="48h">48h</button>
+                    <button type="button" class="btn-time-tab" data-period="7d">7d</button>
+                  </div>
+                </div>
+
+                <div class="trend-canvas-wrap" style="position:relative; width:100%; height:160px;">
+                  <canvas id="homeTrendChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Card 2: District Overview (Donut Chart) -->
+              <div class="ap-panel district-overview-panel">
+                <div class="panel-header-row">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                  </svg>
+                  <h3 id="districtOverviewHeading">Guntur District Overview</h3>
+                </div>
+
+                <div class="overview-donut-row">
+                  <div class="donut-canvas-wrap" style="position:relative; width:120px; height:120px;">
+                    <canvas id="districtDonutChart"></canvas>
+                    <div class="donut-center-label">
+                      <span class="donut-center-num" id="donutTotalWards">--</span>
+                      <span class="donut-center-text" id="donutCenterText">Divisions</span>
+                    </div>
+                  </div>
+
+                  <div class="donut-breakdown-list">
+                    <div class="donut-row-item"><span class="dot-breakdown dot-cyan"></span> <span id="dwTotalLabel">Total Divisions:</span> <strong id="dwTotal">--</strong></div>
+                    <div class="donut-row-item"><span class="dot-breakdown dot-green"></span> Low Risk: <strong id="dwLow">--</strong></div>
+                    <div class="donut-row-item"><span class="dot-breakdown dot-yellow"></span> Moderate Risk: <strong id="dwMod">--</strong></div>
+                    <div class="donut-row-item"><span class="dot-breakdown dot-orange"></span> High Risk: <strong id="dwHigh">--</strong></div>
+                    <div class="donut-row-item"><span class="dot-breakdown dot-red"></span> Severe Risk: <strong id="dwSevere">--</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3: Data Sources & Status -->
+              <div class="ap-panel data-sources-panel">
+                <div class="panel-header-row">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="m9 12 2 2 4-4"></path>
+                  </svg>
+                  <h3>Data Sources &amp; Status</h3>
+                </div>
+
+                <ul class="data-sources-list">
+                  <li>
+                    <span class="check-source-icon">&#9989;</span>
+                    <span class="source-name">Sentinel-1 (SAR)</span>
+                    <span class="source-status-badge">Live STAC</span>
+                  </li>
+                  <li>
+                    <span class="check-source-icon">&#9989;</span>
+                    <span class="source-name">Sentinel-2 (Optical)</span>
+                    <span class="source-status-badge">Live STAC</span>
+                  </li>
+                  <li>
+                    <span class="check-source-icon">&#9989;</span>
+                    <span class="source-name">Rainfall (GPM IMERG)</span>
+                    <span class="source-status-badge status-live">Live</span>
+                  </li>
+                  <li>
+                    <span class="check-source-icon">&#9989;</span>
+                    <span class="source-name">Weather (Open-Meteo)</span>
+                    <span class="source-status-badge status-live">Live</span>
+                  </li>
+                  <li>
+                    <span class="check-source-icon">&#9989;</span>
+                    <span class="source-name">GIS Layers</span>
+                    <span class="source-status-badge">Up-to-date</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- 5. Bottom Telemetry Bar -->
+            <footer class="ap-telemetry-bar">
+              <div class="telemetry-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+                </svg>
+                <div>
+                  <span class="telemetry-label">Andhra Pradesh Coverage</span>
+                  <span class="telemetry-value">162,968 km²</span>
+                </div>
+              </div>
+              <div class="telemetry-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <div>
+                  <span class="telemetry-label">GMC Monitoring Area</span>
+                  <span class="telemetry-value">168.41 km²</span>
+                </div>
+              </div>
+              <div class="telemetry-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <div>
+                  <span class="telemetry-label">Primary Satellite Feed</span>
+                  <span class="telemetry-value">Sentinel-1 / Sentinel-2</span>
+                </div>
+              </div>
+              <div class="telemetry-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <div>
+                  <span class="telemetry-label">Last Updated</span>
+                  <span class="telemetry-value" id="telemetryLastUpdated">Live Stream</span>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             PAGE 2: LOCATION (GMC Boundary, 57 Wards & Ward-Wise AI Model Prediction)
+             ================================================================== -->
+                <!-- ==================================================================
+             PAGE 2: LOCATION DASHBOARD (Exact Match to Reference Screenshot)
+             ================================================================== -->
+        <section id="locationPage" class="view-page">
+          <div class="location-dashboard-container">
+            
+            <!-- 1. Header Row: Icon + Title/Subtitle + Search Input -->
+            <div class="location-hero-row">
+              <div class="location-title-group">
+                <div class="location-pin-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+                <div class="location-title-texts">
+                  <h2 class="location-main-title" id="locationHeroTitle">Location Dashboard</h2>
+                  <span class="location-sub-title" id="locationHeroSubtitle">Real-Time Drainage Status for Selected Area</span>
+                </div>
+              </div>
+
+              <!-- Search Bar Matching Reference Screenshot -->
+              <div class="location-search-wrap">
+                <svg class="search-lens-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="locationSearchInput" class="location-search-input" placeholder="Search Location... (e.g. Patna, Guntur)">
+              </div>
+            </div>
+
+            <!-- 2. Middle Grid: Left Map (~73%) + Right Stacked Performance Cards (~27%) -->
+            <div class="location-middle-grid">
+              
+              <!-- Left Map Card -->
+              <div class="location-map-panel">
+                <!-- 3 Base Layer Switcher Tabs (Top-Left inside Map) -->
+                <div class="location-map-layer-tabs">
+                  <button type="button" class="btn-map-type active" data-type="streets" id="btnMapTypeView">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                    <span>Map View</span>
+                  </button>
+                  <button type="button" class="btn-map-type" data-type="satellite" id="btnMapTypeSatellite">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span>Satellite</span>
+                  </button>
+                  <button type="button" class="btn-map-type" data-type="terrain" id="btnMapTypeTerrain">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    <span>Terrain</span>
+                  </button>
+                </div>
+
+                <!-- Floating Legend Box (Top-Right inside Map) -->
+                <div class="location-floating-legend">
+                  <div class="loc-legend-item"><span class="legend-swatch-line" style="background:#0284c7; height:3.5px;"></span> River</div>
+                  <div class="loc-legend-item"><span class="legend-swatch-line" style="background:#00f0ff; height:3px;"></span> Main Canal</div>
+                  <div class="loc-legend-item"><span class="legend-swatch-line" style="background:#0369a1; height:2px;"></span> Drain</div>
+                  <div class="loc-legend-item"><span class="loc-legend-badge loc-badge-pump">⚙️</span> Pump Station</div>
+                  <div class="loc-legend-item"><span class="loc-legend-badge loc-badge-gate">⛩️</span> Sluice Gate</div>
+                  <div class="loc-legend-item"><span class="loc-legend-badge loc-badge-culvert">🌉</span> Culvert</div>
+                  <div class="loc-legend-item"><span class="loc-legend-badge loc-badge-wl">🔴</span> Waterlogging Zone</div>
+                </div>
+
+                <!-- Calibrated Scale Box (Bottom-Left inside Map) -->
+                <div class="location-scale-box">
+                  <div class="loc-scale-labels"><span>0</span><span>5</span><span>10 km</span></div>
+                  <div class="loc-scale-ruler">
+                    <div class="loc-ruler-seg"></div>
+                    <div class="loc-ruler-seg"></div>
+                  </div>
+                </div>
+
+                <!-- Real Interactive Leaflet Canvas -->
+                <div id="locationGisMapCanvas" class="location-map-canvas"></div>
+              </div>
+
+              <!-- Right Stack: 4 Performance KPI Cards + Pump Stations Card -->
+              <div class="location-perf-column">
+                
+                <!-- Card 1: Total Inflow -->
+                <div class="loc-metric-card">
+                  <div class="loc-metric-icon icon-cyan-wave">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+                  </div>
+                  <div class="loc-metric-info">
+                    <span class="loc-metric-label">Total Inflow</span>
+                    <strong class="loc-metric-val" id="locPerfInflow">-- m³/s</strong>
+                  </div>
+                  <div class="loc-metric-arrow arrow-up" title="Trending Upward">↑</div>
+                </div>
+
+                <!-- Card 2: Total Outflow -->
+                <div class="loc-metric-card">
+                  <div class="loc-metric-icon icon-green-trend">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                  </div>
+                  <div class="loc-metric-info">
+                    <span class="loc-metric-label">Total Outflow</span>
+                    <strong class="loc-metric-val" id="locPerfOutflow">-- m³/s</strong>
+                  </div>
+                  <div class="loc-metric-arrow arrow-right" title="Nominal Outflow">→</div>
+                </div>
+
+                <!-- Card 3: Water Drained Today -->
+                <div class="loc-metric-card">
+                  <div class="loc-metric-icon icon-cyan-droplet">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                  </div>
+                  <div class="loc-metric-info">
+                    <span class="loc-metric-label">Water Drained Today</span>
+                    <strong class="loc-metric-val" id="locPerfDrained">-- Million m³</strong>
+                  </div>
+                </div>
+
+                <!-- Card 4: Drainage Efficiency -->
+                <div class="loc-metric-card">
+                  <div class="loc-metric-icon icon-green-gauge">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><circle cx="12" cy="12" r="9" stroke-dasharray="45 15"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                  <div class="loc-metric-info">
+                    <span class="loc-metric-label">Drainage Efficiency</span>
+                    <strong class="loc-metric-val" id="locPerfEfficiency">--%</strong>
+                  </div>
+                </div>
+
+                <!-- Card 5: Pump Stations (Pump graphic on left + Status counts on right) -->
+                <div class="loc-pump-status-card">
+                  <div class="pump-card-header">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/></svg>
+                    <span>Pump Stations</span>
+                  </div>
+                  <div class="pump-card-body">
+                    <div class="pump-illustration-wrap">
+                      <svg width="78" height="52" viewBox="0 0 90 60" fill="none" class="pump-svg-graphic">
+                        <ellipse cx="45" cy="42" rx="35" ry="12" fill="rgba(0, 240, 255, 0.15)"/>
+                        <circle cx="36" cy="30" r="18" fill="url(#pumpGrad)" stroke="#00f0ff" stroke-width="2"/>
+                        <circle cx="36" cy="30" r="8" fill="#020d21" stroke="#00f0ff" stroke-width="1.5"/>
+                        <rect x="50" y="24" width="26" height="12" rx="2" fill="url(#motorGrad)" stroke="#38bdf8" stroke-width="1.5"/>
+                        <rect x="74" y="20" width="5" height="20" rx="1" fill="#0284c7"/>
+                        <line x1="56" y1="24" x2="56" y2="36" stroke="#020d21" stroke-width="1.5"/>
+                        <line x1="62" y1="24" x2="62" y2="36" stroke="#020d21" stroke-width="1.5"/>
+                        <line x1="68" y1="24" x2="68" y2="36" stroke="#020d21" stroke-width="1.5"/>
+                        <path d="M36 12 L36 4 L48 4" stroke="#00f0ff" stroke-width="3" stroke-linecap="round"/>
+                        <defs>
+                          <linearGradient id="pumpGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#0369a1"/></linearGradient>
+                          <linearGradient id="motorGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#00f0ff"/></linearGradient>
+                        </defs>
+                      </svg>
+                    </div>
+                    <div class="pump-status-counts">
+                      <div class="pump-status-row">
+                        <span class="status-indicator-dot dot-green"></span>
+                        <span class="status-name">Running</span>
+                        <strong class="status-num" id="locPumpsRunning">5</strong>
+                      </div>
+                      <div class="pump-status-row">
+                        <span class="status-indicator-dot dot-yellow"></span>
+                        <span class="status-name">Standby</span>
+                        <strong class="status-num" id="locPumpsStandby">1</strong>
+                      </div>
+                      <div class="pump-status-row">
+                        <span class="status-indicator-dot dot-red"></span>
+                        <span class="status-name">Offline</span>
+                        <strong class="status-num" id="locPumpsOffline">0</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 3. Bottom Row: 3 Analytics Panels -->
+            <div class="location-bottom-grid">
+              
+              <!-- Panel 1: Drainage Flow Path -->
+              <div class="loc-bottom-card">
+                <div class="loc-card-header">
+                  <div class="loc-header-title-group">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg>
+                    <span>Drainage Flow Path</span>
+                  </div>
+                </div>
+                <!-- Interactive Flow Sequence matching reference screenshot -->
+                <div class="flow-path-diagram">
+                  <div class="flow-step-node" id="nodeRiver" title="Receiving River Source">
+                    <div class="flow-node-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+                    </div>
+                    <span class="flow-node-text">River</span>
+                  </div>
+                  <div class="flow-arrow-sep">➔</div>
+                  <div class="flow-step-node" id="nodeCanal" title="Gravity Canal Network">
+                    <div class="flow-node-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    </div>
+                    <span class="flow-node-text">Main Canal</span>
+                  </div>
+                  <div class="flow-arrow-sep">➔</div>
+                  <div class="flow-step-node" id="nodePumps" title="5 Active Lift Sumps">
+                    <div class="flow-node-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="21"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/></svg>
+                    </div>
+                    <span class="flow-node-text">Pump Stations</span>
+                  </div>
+                  <div class="flow-arrow-sep">➔</div>
+                  <div class="flow-step-node" id="nodeGates" title="Automated Sluice SCADA">
+                    <div class="flow-node-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><line x1="4" y1="20" x2="4" y2="4"/><line x1="20" y1="20" x2="20" y2="4"/><line x1="2" y1="6" x2="22" y2="6"/><rect x="7" y1="8" width="10" height="9" fill="currentColor"/></svg>
+                    </div>
+                    <span class="flow-node-text">Sluice Gates</span>
+                  </div>
+                  <div class="flow-arrow-sep">➔</div>
+                  <div class="flow-step-node" id="nodeOutfall" title="Estuary & Coastal Outfall">
+                    <div class="flow-node-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+                    </div>
+                    <span class="flow-node-text">Outfall (River)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel 2: 24-Hour Water Trend -->
+              <div class="loc-bottom-card">
+                <div class="loc-card-header justify-between">
+                  <div class="loc-header-title-group">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>24-Hour Water Trend</span>
+                  </div>
+                  <div class="trend-legend-pills">
+                    <span class="legend-pill"><span class="pill-dot dot-cyan"></span> Inflow</span>
+                    <span class="legend-pill"><span class="pill-dot dot-purple"></span> Outflow</span>
+                  </div>
+                </div>
+                <div class="loc-trend-canvas-wrap" style="position:relative; width:100%; height:115px;">
+                  <canvas id="location24hTrendCanvas"></canvas>
+                </div>
+              </div>
+
+              <!-- Panel 3: Alerts & Bottlenecks -->
+              <div class="loc-bottom-card">
+                <div class="loc-card-header">
+                  <div class="loc-header-title-group">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span>Alerts &amp; Bottlenecks</span>
+                  </div>
+                </div>
+                <div class="location-alerts-list" id="locationAlertsContainer">
+                  <!-- Dynamically rendered alerts -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             PAGE 3: DRAINAGE (Exact Reference UI: Real GIS Map & Live Performance)
+             ================================================================== -->
+        <section id="drainagePage" class="view-page">
+          <div class="drainage-dashboard-container">
+            
+            <!-- 1. Header Row: Wave Icon + Title + 4 Tabs + Status Pill & Refresh -->
+            <div class="drainage-hero-row">
+              <div class="drainage-title-wrap">
+                <svg class="drainage-wave-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.5">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <h2 id="drainageHeroTitle" class="drainage-main-heading">GMC Stormwater Drainage Network &amp; Problem Zones</h2>
+              </div>
+
+              <!-- 4 Filter Tabs Matching Reference Screenshot -->
+              <div class="drainage-tabs-bar">
+                <button type="button" class="btn-drainage-tab active" data-tab="network" id="tabDrainageNetwork">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg>
+                  <span>Drainage Network</span>
+                </button>
+                <button type="button" class="btn-drainage-tab" data-tab="flow" id="tabFlowPath">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+                  <span>Flow Path</span>
+                </button>
+                <button type="button" class="btn-drainage-tab" data-tab="problems" id="tabProblemZones">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span>Problem Zones</span>
+                </button>
+                <button type="button" class="btn-drainage-tab" data-tab="infrastructure" id="tabInfrastructure">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <span>Infrastructure</span>
+                </button>
+              </div>
+
+              <!-- Live Status Pill & Refresh Action -->
+              <div class="drainage-header-status-controls">
+                <div class="drainage-status-pill">
+                  <span class="status-live-dot"></span>
+                  <span>Live</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <button type="button" id="btnRefreshDrainage" class="btn-drainage-refresh" title="Refresh Live Drainage Telemetry">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  <span>Refresh</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. Middle Grid: Left Real Satellite GIS Map (68%) + Right Performance Panel (32%) -->
+            <div class="drainage-middle-grid">
+              
+              <!-- Left: Real Interactive GIS Map Card -->
+              <div class="drainage-map-panel">
+                <!-- North Arrow Indicator (Top-Left) -->
+                <div class="drainage-north-arrow" title="North Orientation">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <polygon points="12,2 17,21 12,17 7,21" fill="#00f0ff" stroke="#ffffff" stroke-width="1.2"/>
+                    <text x="12" y="10" font-size="7" font-weight="900" fill="#020d21" text-anchor="middle">N</text>
+                  </svg>
+                </div>
+
+                <!-- Map Scale Indicator (Bottom-Left) -->
+                <div class="drainage-scale-box">
+                  <div class="scale-labels"><span>0</span><span>2.5</span><span>5 km</span></div>
+                  <div class="scale-ruler">
+                    <div class="ruler-segment"></div>
+                    <div class="ruler-segment"></div>
+                  </div>
+                </div>
+
+                <!-- Floating Glassmorphism Map Legend Box (Top-Right) -->
+                <div class="drainage-floating-legend">
+                  <div class="drainage-legend-item"><span class="legend-swatch-box" style="background:#0284c7;"></span> River</div>
+                  <div class="drainage-legend-item"><span class="legend-swatch-line" style="background:#00f0ff; height:3px;"></span> Main Canal</div>
+                  <div class="drainage-legend-item"><span class="legend-swatch-line" style="background:#38bdf8; height:1.5px;"></span> Secondary Drain</div>
+                  <div class="drainage-legend-item"><span class="legend-badge-icon badge-pump">⚙️</span> Pump</div>
+                  <div class="drainage-legend-item"><span class="legend-badge-icon badge-gate">⛩️</span> Sluice Gate</div>
+                  <div class="drainage-legend-item"><span class="legend-badge-icon badge-culvert">🌉</span> Culvert</div>
+                  <div class="drainage-legend-item"><span class="legend-badge-icon badge-bottleneck">⚠️</span> Bottleneck</div>
+                  <div class="drainage-legend-item"><span class="legend-badge-icon badge-flow">➔</span> Flow Direction</div>
+                </div>
+
+                <!-- Real Interactive Leaflet Satellite Canvas -->
+                <div id="drainageSatelliteMap" class="drainage-satellite-canvas"></div>
+              </div>
+
+              <!-- Right: LIVE DRAINAGE PERFORMANCE Card -->
+              <div class="drainage-performance-panel">
+                <div class="drainage-card-header">
+                  <div class="card-title-group">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>LIVE DRAINAGE PERFORMANCE</span>
+                  </div>
+                  <span class="pulse-live-green" title="Live Continuous Monitoring">●</span>
+                </div>
+
+                <!-- 2x3 Metric Cards Grid -->
+                <div class="performance-metrics-grid">
+                  <!-- Total Inflow -->
+                  <div class="perf-metric-cell">
+                    <div class="perf-cell-icon icon-inflow">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+                    </div>
+                    <div class="perf-cell-data">
+                      <span class="perf-label">Total Inflow</span>
+                      <strong class="perf-val" id="perfTotalInflow">-- m³/s</strong>
+                    </div>
+                  </div>
+
+                  <!-- Total Outflow -->
+                  <div class="perf-metric-cell">
+                    <div class="perf-cell-icon icon-outflow">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/><path d="M12 9v12"/></svg>
+                    </div>
+                    <div class="perf-cell-data">
+                      <span class="perf-label">Total Outflow</span>
+                      <strong class="perf-val" id="perfTotalOutflow">-- m³/s</strong>
+                    </div>
+                  </div>
+
+                  <!-- Water Drained Today -->
+                  <div class="perf-metric-cell">
+                    <div class="perf-cell-icon icon-drained">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                    </div>
+                    <div class="perf-cell-data">
+                      <span class="perf-label">Water Drained Today</span>
+                      <strong class="perf-val" id="perfDrainedToday">-- million m³</strong>
+                    </div>
+                  </div>
+
+                  <!-- Drainage Efficiency -->
+                  <div class="perf-metric-cell">
+                    <div class="perf-cell-icon icon-efficiency">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <div class="perf-cell-data">
+                      <span class="perf-label">Drainage Efficiency</span>
+                      <strong class="perf-val" id="perfEfficiency">--%</strong>
+                    </div>
+                  </div>
+
+                  <!-- Active Pumps -->
+                  <div class="perf-metric-cell">
+                    <div class="perf-cell-icon icon-pumps">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/></svg>
+                    </div>
+                    <div class="perf-cell-data">
+                      <span class="perf-label">Active Pumps</span>
+                      <strong class="perf-val" id="perfActivePumps">8 / 10</strong>
+                    </div>
+                  </div>
+
+                  <!-- Critical Bottlenecks -->
+                  <div class="perf-metric-cell">
+                    <div class="perf-cell-icon icon-bottlenecks">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <div class="perf-cell-data">
+                      <span class="perf-label">Critical Bottlenecks</span>
+                      <strong class="perf-val" id="perfCriticalBottlenecks">3</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sub-Card: Water Balance (Side-by-side vertical comparisons) -->
+                <div class="drainage-subcard-box">
+                  <div class="subcard-title-row">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>Water Balance</span>
+                  </div>
+                  <div class="water-balance-row">
+                    <div class="balance-metric-col">
+                      <div class="balance-num" id="balanceInflowNum">-- m³/s</div>
+                      <div class="balance-bar-container">
+                        <div class="balance-bar-cyan" id="balanceBarInflow"></div>
+                      </div>
+                      <span class="balance-tag">Inflow</span>
+                    </div>
+                    <div class="balance-metric-col">
+                      <div class="balance-num" id="balanceOutflowNum">-- m³/s</div>
+                      <div class="balance-bar-container">
+                        <div class="balance-bar-purple" id="balanceBarOutflow"></div>
+                      </div>
+                      <span class="balance-tag">Outflow</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sub-Card: Pump & Sluice Operations Table -->
+                <div class="drainage-subcard-box">
+                  <div class="subcard-title-row">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>Pump &amp; Sluice Operations</span>
+                  </div>
+                  <table class="drainage-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Discharge</th>
+                      </tr>
+                    </thead>
+                    <tbody id="drainageOpsTableBody">
+                      <!-- Dynamic pumps and sluices loaded from live telemetry -->
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 3. Bottom Row: 3 Analytics Panels -->
+            <div class="drainage-bottom-grid">
+              
+              <!-- Panel 1: Flow by Channel -->
+              <div class="drainage-bottom-card">
+                <div class="drainage-card-header">
+                  <div class="card-title-group">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f0ff" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>Flow by Channel</span>
+                  </div>
+                </div>
+                <div class="channel-flow-bars-wrap" id="drainageChannelFlowsContainer">
+                  <!-- Dynamically rendered horizontal bars -->
+                </div>
+              </div>
+
+              <!-- Panel 2: Bottleneck & Capacity -->
+              <div class="drainage-bottom-card">
+                <div class="drainage-card-header">
+                  <div class="card-title-group">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span>Bottleneck &amp; Capacity</span>
+                  </div>
+                </div>
+                <div class="bottleneck-bars-wrap" id="drainageBottlenecksContainer">
+                  <!-- Dynamically rendered bottleneck progress bars -->
+                </div>
+              </div>
+
+              <!-- Panel 3: 24-Hour Drainage Trend -->
+              <div class="drainage-bottom-card">
+                <div class="drainage-card-header justify-between">
+                  <div class="card-title-group">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <span>24-Hour Drainage Trend</span>
+                  </div>
+                  <div class="trend-legend-pills">
+                    <span class="legend-pill"><span class="pill-line line-cyan"></span> Inflow</span>
+                    <span class="legend-pill"><span class="pill-line line-purple"></span> Outflow</span>
+                  </div>
+                </div>
+                <div class="trend-canvas-container" style="position:relative; width:100%; height:120px;">
+                  <canvas id="drainage24hTrendCanvas"></canvas>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             PAGE 4: WATERLOGGING (Satellite SAR, Hotspots & Risk Engine)
+             ================================================================== -->
+                <section id="waterloggingPage" class="view-page">
+          <div class="page-container waterlogging-container">
+
+            <!-- Hero Header Row (Matching Reference Screenshot) -->
+            <div class="wl-hero-header">
+              <div class="wl-title-group">
+                <div class="wl-droplet-glow">
+                  <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="url(#dropletGrad)" stroke="var(--accent-cyan)"></path>
+                    <defs>
+                      <linearGradient id="dropletGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.9"/>
+                        <stop offset="100%" stop-color="#0284c7" stop-opacity="0.8"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div class="wl-title-text">
+                  <h1 class="wl-main-title">Waterlogging &amp; Gravity</h1>
+                  <div class="wl-sub-title">MONITORING &amp; PREDICTIONS</div>
+                  <p class="wl-tagline">Surface Waterlogging Overview &amp; Risk Forecast &bull; Guntur Municipal Corporation (GMC 57 Wards)</p>
+                </div>
+              </div>
+
+              <!-- Multi-Scenario AI Simulation Switcher -->
+              <div class="wl-scenario-switcher">
+                <span class="scenario-label">Simulation Scenario:</span>
+                <div class="scenario-btn-group">
+                  <button class="btn-scenario active" data-scenario="baseline" data-rain="0" type="button" title="Live Open-Meteo &amp; Historical Cache Ingestion">
+                    <span class="dot-indicator green"></span> Baseline (Live API)
+                  </button>
+                  <button class="btn-scenario" data-scenario="moderate" data-rain="25" type="button" title="Simulate +25mm Moderate Storm Runoff">
+                    <span class="dot-indicator yellow"></span> Moderate (+25mm)
+                  </button>
+                  <button class="btn-scenario" data-scenario="heavy" data-rain="60" type="button" title="Simulate +60mm Severe Storm Surge">
+                    <span class="dot-indicator orange"></span> Heavy (+60mm)
+                  </button>
+                  <button class="btn-scenario" data-scenario="extreme" data-rain="120" type="button" title="Simulate +120mm Monsoon Cloudburst">
+                    <span class="dot-indicator red"></span> Extreme (+120mm)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+                 DEDICATED SECTION: SELECT GMC WARD (All 57 Verified Wards)
+                 ============================================================== -->
+            <div class="wl-ward-selector-banner">
+              <div class="selector-banner-header">
+                <div class="banner-title-col">
+                  <div class="banner-badge">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>GMC Municipal Administrative Baseline Directory</span>
+                  </div>
+                  <h2 class="banner-main-title">SELECT GMC WARD</h2>
+                  <p class="banner-subtitle">
+                    Select any ward by number or name to update GIS map, telemetry inspector and dual-axis ML risk curves.
+                    <span class="text-cyan">(GMC 57-Ward Delimitation Edition &bull; Pre-76 Ward Gazetted Delimitation, Roc No. 997422/2026/G1)</span>
+                  </p>
+                </div>
+
+                <!-- Action Controls Group -->
+                <div class="banner-actions-group">
+                  <button id="btnSelectAllWards" class="btn-banner-action" type="button" title="Select and display all 57 GMC Wards">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Select All (57 Wards)</span>
+                  </button>
+                  <button id="btnClearWardSelection" class="btn-banner-action" type="button" title="Reset selection to default ward">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <span>Clear Selection</span>
+                  </button>
+                  <span class="selection-counter-badge" id="wardSelectionCounter">1 Ward Selected (Ward 4)</span>
+                </div>
+              </div>
+
+              <!-- Search & Jump Dropdown Row -->
+              <div class="selector-controls-row">
+                <!-- Search Field -->
+                <div class="search-input-wrapper">
+                  <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="gmcWardSearchInput" class="gmc-ward-search-field" placeholder="Search by Ward Number (e.g. 4, 12, 16) or Official Locality Name (Brodipet, Arundelpet, Old Guntur)...">
+                  <button id="btnClearSearch" class="btn-clear-search" type="button" title="Clear search">&times;</button>
+                </div>
+
+                <!-- Jump-To Dropdown -->
+                <div class="dropdown-select-wrapper">
+                  <select id="gmcWardQuickDropdown" class="gmc-ward-dropdown">
+                    <option value="">-- Jump to Ward (Ward ID | Official Name | Risk Level) --</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Multi-Ward Selection Instruction -->
+              <div class="selector-help-note">
+                <span>Multi-select active: Click checkboxes below to compare multiple wards on the graph and table simultaneously.</span>
+              </div>
+
+              <!-- Full Scrollable Grid of 57 Verified Ward Cards -->
+              <div class="ward-directory-scrollable" id="wardDirectoryList">
+                <!-- Populated dynamically by app.js with 57 ward entries: [Checkbox] Ward ID | Official Name | [Risk Badge] -->
+              </div>
+
+              <!-- Multi-Ward Comparison Table (Revealed when multiple wards are checked) -->
+              <div class="multi-ward-comparison-panel" id="multiWardComparisonPanel" style="display:none;">
+                <div class="comp-panel-header">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <strong>Selected Wards Comparison Matrix</strong>
+                  </div>
+                  <span class="badge-status-pill pill-cyan" id="compWardsCountBadge">Multiple Wards</span>
+                </div>
+                <div class="table-responsive-wrapper">
+                  <table class="wl-mini-table comp-table">
+                    <thead>
+                      <tr>
+                        <th>Ward ID</th>
+                        <th>Official Locality Name</th>
+                        <th>Elevation</th>
+                        <th>Slope</th>
+                        <th>24h Rain</th>
+                        <th>Drainage Proximity</th>
+                        <th>Inundation Prob</th>
+                        <th>Risk Tier</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="multiWardCompTbody">
+                      <!-- Populated dynamically by app.js -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+                 HERO SECTION: DUAL PANEL (Exact Reference Screenshot Layout)
+                 ============================================================== -->
+            <div class="wl-hero-grid">
+
+              <!-- LEFT COLUMN: Trend Chart + Affected Areas Table + Flood Alert -->
+              <div class="wl-left-col">
+
+                <!-- 1. Waterlogging Trend Area & Dual-Axis Chart Card -->
+                <div class="wl-card trend-card">
+                  <div class="wl-card-header">
+                    <div class="wl-card-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                      </svg>
+                      <span id="wlTrendCardTitle">Ward-wise Rainfall &amp; Waterlogging Risk Trend</span>
+                    </div>
+                    <div class="wl-time-tabs">
+                      <button class="wl-time-tab" data-period="6h" type="button" title="Observed last 6 hours">Last 6 Hours</button>
+                      <button class="wl-time-tab active" data-period="24h" type="button" title="Observed &amp; forecast 24 hours">Last 24 Hours</button>
+                      <button class="wl-time-tab" data-period="48h" type="button" title="Accumulated 48 hours">Last 48 Hours</button>
+                      <button class="wl-time-tab" data-period="7d" type="button" title="Weekly ensemble trend">Next 7 Days</button>
+                    </div>
+                  </div>
+
+                  <!-- Chart Canvas Container (Dual-Axis with Left Rainfall mm & Right Risk %) -->
+                  <div class="trend-chart-container" id="wlTrendContainer">
+                    <div class="chart-canvas-wrap" style="position:relative; width:100%; height:270px; min-height:260px;">
+                      <canvas id="wlTrendCanvas"></canvas>
+
+                      <!-- Empty State Message Overlay -->
+                      <div class="chart-empty-state" id="wlChartEmpty" style="display:none;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="8" x2="12" y2="12"></line>
+                          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span id="wlChartEmptyText">Rainfall observations or inundation telemetry currently unavailable for this temporal window.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Dynamic Chart Legend -->
+                  <div class="trend-chart-legend">
+                    <div class="legend-chip"><span class="chip-color bar-cyan"></span> Observed Rain (mm)</div>
+                    <div class="legend-chip"><span class="chip-color line-dashed"></span> Forecast Rain (mm)</div>
+                    <div class="legend-chip"><span class="chip-color line-glow"></span> Risk Probability (%)</div>
+                    <div class="legend-chip"><span class="chip-color threshold-line"></span> *Model Threshold (0.36)</div>
+                  </div>
+                </div>
+
+                <!-- 2. District Stagnation & Affected Areas Table Card (Matching Screenshot) -->
+                <div class="wl-card stagnation-card">
+                  <div class="wl-card-header">
+                    <div class="wl-card-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                      </svg>
+                      <span>District Stagnation &amp; Affected Areas</span>
+                    </div>
+                    <span class="badge-status-pill pill-cyan" id="stagnationSummaryBadge">57 Wards Evaluated</span>
+                  </div>
+                  <div class="table-responsive-wrapper">
+                    <table class="wl-mini-table">
+                      <thead>
+                        <tr>
+                          <th>Dist / Mandal / Ward Basin</th>
+                          <th>Waterlogged Area (km²)</th>
+                          <th>Water Depth (cm)</th>
+                          <th>Risk Level</th>
+                        </tr>
+                      </thead>
+                      <tbody id="stagnationSummaryTbody">
+                        <!-- Populated dynamically by app.js -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 3. Terrain Flood Alert Banner (Matching Screenshot) -->
+                <div class="terrain-flood-alert-banner">
+                  <div class="alert-icon-wrap">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/>
+                    </svg>
+                  </div>
+                  <div class="alert-content">
+                    <strong>Terrain Flood Alert:</strong> Runoff, elevation, and natural gradient checks. Low-elevation basins (&lt;27m MSL) experience water stagnation under continuous precipitation.
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- RIGHT COLUMN: Large Satellite Overlaid Waterlogged Areas Map -->
+              <div class="wl-right-col">
+                <div class="wl-map-card">
+                  <div class="wl-map-header">
+                    <div class="wl-card-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                      </svg>
+                      <span>Geospatial AI Inundation &amp; Risk Map</span>
+                    </div>
+                    <div class="wl-map-tools">
+                      <button class="btn-map-tool active" id="btnToggleWards" type="button" title="Toggle 57 GMC Ward Polygons">Wards</button>
+                      <button class="btn-map-tool active" id="btnToggleSAR" type="button" title="Toggle Sentinel-1 Radar Water Extent">SAR Water</button>
+                      <button class="btn-map-tool active" id="btnToggleHotspots" type="button" title="Toggle Flood Inundation Hotspots">Hotspots</button>
+                      <button class="btn-map-tool active" id="btnToggleCanals" type="button" title="Toggle GIS Drainage Canals">Canals</button>
+                      <button class="btn-map-tool" id="btnFitGMC" type="button" title="Fit Map to GMC 57-Ward Boundary">Reset GMC</button>
+                    </div>
+                  </div>
+
+                  <!-- Geographical Navigation Hierarchy (India -> AP -> Guntur -> GMC) -->
+                  <div class="map-geo-nav-bar">
+                    <span class="geo-nav-label">Geographic Extent:</span>
+                    <button class="btn-geo-nav" id="btnNavIndia" type="button" title="Zoom out to India National Boundary">
+                      <span>🇮🇳 India</span>
+                    </button>
+                    <button class="btn-geo-nav" id="btnNavAP" type="button" title="Zoom to Andhra Pradesh State &amp; Districts">
+                      <span>Andhra Pradesh</span>
+                    </button>
+                    <button class="btn-geo-nav" id="btnNavGunturDist" type="button" title="Zoom to Guntur District Boundary">
+                      <span>Guntur District</span>
+                    </button>
+                    <button class="btn-geo-nav active" id="btnNavGMCWards" type="button" title="Focus on Guntur Municipal Corporation Wards">
+                      <span>GMC 57 Wards</span>
+                    </button>
+                  </div>
+
+                  <!-- Map Risk Tier Filter Bar -->
+                  <div class="map-risk-filter-bar">
+                    <span class="filter-lbl">Filter by Risk:</span>
+                    <button class="map-risk-btn active" data-risk="all" type="button">All (<span id="countAllWards">57</span>)</button>
+                    <button class="map-risk-btn" data-risk="severe" type="button" style="--btn-color:#ef4444;"><span class="dot red"></span> Severe (<span id="countSevereWards">0</span>)</button>
+                    <button class="map-risk-btn" data-risk="high" type="button" style="--btn-color:#f97316;"><span class="dot orange"></span> High (<span id="countHighWards">0</span>)</button>
+                    <button class="map-risk-btn" data-risk="moderate" type="button" style="--btn-color:#f59e0b;"><span class="dot yellow"></span> Moderate (<span id="countModWards">0</span>)</button>
+                    <button class="map-risk-btn" data-risk="low" type="button" style="--btn-color:#10b981;"><span class="dot green"></span> Low (<span id="countLowWards">57</span>)</button>
+                    <button class="map-risk-btn" data-risk="unknown" type="button" style="--btn-color:#64748b;"><span class="dot grey"></span> Unknown (<span id="countUnkWards">0</span>)</button>
+                  </div>
+
+                  <div class="wl-map-container">
+                    <div id="waterloggingMapCanvas" class="leaflet-map-canvas"></div>
+
+                    <!-- Map Loading Overlay -->
+                    <div id="wlMapLoading" class="map-state-overlay" style="display:none;">
+                      <div class="spinner-ring"></div>
+                      <span>Ingesting Satellite SAR &amp; GMC Ward Polygons...</span>
+                    </div>
+
+                    <!-- Map Error Overlay -->
+                    <div id="wlMapError" class="map-state-overlay error" style="display:none;">
+                      <span>GIS Ward layer failed to load.</span>
+                      <button id="btnRetryMapLoad" class="btn-map-retry" type="button">Retry Ingestion</button>
+                    </div>
+
+                    <!-- Floating Badges Matching Reference Screenshot -->
+                    <div class="map-floating-badge guntur-badge" id="mapBadgeGuntur">
+                      <span class="badge-dot-red"></span> Guntur (Severe) &amp; Bapatla (Critical Alert)
+                    </div>
+                    <div class="map-floating-badge oldguntur-badge">Old Guntur (Ward 12)</div>
+                    <div class="map-floating-badge brodipet-badge">Brodipet (Ward 4)</div>
+
+                    <!-- Map Floating Legend Matching Reference Screenshot & Tiers -->
+                    <div class="map-floating-legend">
+                      <div class="legend-title">GMC 57-Ward AI Risk Tiers</div>
+                      <div class="legend-item"><span class="legend-color-box red"></span> Severe (&ge; 60%)</div>
+                      <div class="legend-item"><span class="legend-color-box orange"></span> High (36% - 59%)</div>
+                      <div class="legend-item"><span class="legend-color-box yellow"></span> Moderate (20% - 35%)</div>
+                      <div class="legend-item"><span class="legend-color-box green"></span> Low (&lt; 20%)</div>
+                      <div class="legend-item"><span class="legend-color-box grey"></span> Unknown / Missing</div>
+                      <div class="legend-divider"></div>
+                      <div class="legend-item"><span class="legend-color-box cyan"></span> Radar Water Extent</div>
+                      <div class="legend-item"><span class="legend-color-box blue"></span> Drainage Canals</div>
+                    </div>
+
+                    <!-- Back to Overview Button Matching Screenshot -->
+                    <button class="btn-map-back" id="btnMapBackOverview" type="button">
+                      &larr; BACK TO OVERVIEW
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==============================================================
+                 SECTION 1: SATELLITE WATER DETECTION ENGINE
+                 ============================================================== -->
+            <div class="wl-section-block">
+              <div class="section-title-row">
+                <div class="section-title-left">
+                  <span class="section-num">01</span>
+                  <h3 class="section-heading">Satellite Water Detection Engine</h3>
+                </div>
+                <span class="page-badge">Sentinel-1 C-SAR &bull; Sentinel-2 MSI L2A &bull; Multi-Temporal Radar</span>
+              </div>
+
+              <div class="satellite-grid-cards">
+                <!-- Card 1: Sentinel-1 SAR Radar Water Detection -->
+                <div class="sat-feature-card">
+                  <div class="sat-card-top">
+                    <div class="sat-icon-wrap">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="2"></circle>
+                        <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="sat-source-title">SENTINEL-1 C-BAND SAR</div>
+                      <div class="sat-source-sub">Synthetic Aperture Radar (IW Mode, VV Polarization)</div>
+                    </div>
+                  </div>
+                  <div class="sat-metric-highlight">
+                    <span class="sat-val" id="satCardVV">-10.5 dB</span>
+                    <span class="sat-badge" id="satCardSARStatus">Calibrated Sigma0</span>
+                  </div>
+                  <p class="sat-desc">
+                    Specular reflection over calm surface water dramatically attenuates radar backscatter (&lt; -14.0 dB threshold). Nominal dry urban baseline is -10.5 dB.
+                  </p>
+                  <div class="sat-meta-grid">
+                    <div><span class="meta-lbl">Acquisition:</span> <strong id="satSARDate">28 Sep 2026, 06:14 UTC</strong></div>
+                    <div><span class="meta-lbl">Resolution:</span> <strong>10m GRD (ESA Copernicus)</strong></div>
+                    <div><span class="meta-lbl">Processing:</span> <strong>Range-Doppler Terrain Corrected</strong></div>
+                    <div><span class="meta-lbl">Confidence:</span> <strong style="color:var(--accent-cyan);" id="satSARConf">92.4% Specular Backscatter</strong></div>
+                  </div>
+                </div>
+
+                <!-- Card 2: Sentinel-2 Multi-Spectral Optical Water Indices -->
+                <div class="sat-feature-card">
+                  <div class="sat-card-top">
+                    <div class="sat-icon-wrap optical-glow">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a7 7 0 0 0 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 0 7-7z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="sat-source-title">SENTINEL-2 L2A OPTICAL WATER</div>
+                      <div class="sat-source-sub">Multi-Spectral Instrument (NDWI / MNDWI Ratios)</div>
+                    </div>
+                  </div>
+                  <div class="sat-metric-highlight">
+                    <span class="sat-val" id="satCardNDWI">-0.05 NDWI</span>
+                    <span class="sat-badge" id="satCardOpticalStatus">Cloud Cover: 8.2%</span>
+                  </div>
+                  <p class="sat-desc">
+                    Multi-spectral ratio (Green - NIR) / (Green + NIR) delineates surface water bodies and distinguishes saturated urban soils from open water accumulation.
+                  </p>
+                  <div class="sat-meta-grid">
+                    <div><span class="meta-lbl">Acquisition:</span> <strong id="satOptDate">27 Sep 2026, 05:22 UTC</strong></div>
+                    <div><span class="meta-lbl">Resolution:</span> <strong>10m Bands (B3, B8, B11)</strong></div>
+                    <div><span class="meta-lbl">Vegetation Index:</span> <strong id="satOptNDVI">0.42 NDVI</strong></div>
+                    <div><span class="meta-lbl">Confidence:</span> <strong style="color:var(--accent-teal);" id="satOptConf">89.1% Spectral Index</strong></div>
+                  </div>
+                </div>
+
+                <!-- Card 3: Permanent Water vs Possible Floodwater -->
+                <div class="sat-feature-card">
+                  <div class="sat-card-top">
+                    <div class="sat-icon-wrap water-glow">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="sat-source-title">WATER EXTENT CLASSIFICATION</div>
+                      <div class="sat-source-sub">Permanent Water Bodies vs Localized Floodwater</div>
+                    </div>
+                  </div>
+                  <div class="sat-metric-highlight">
+                    <span class="sat-val" id="satCardActiveExtent">-- km²</span>
+                    <span class="sat-badge" id="satCardExtentClass">Dynamic Modeled Inundation</span>
+                  </div>
+                  <p class="sat-desc">
+                    Permanent baseline waterways (Western Krishna Delta Canal, Guntur Channel, Gujjanagundla Tank: 4.25 km²) isolated from transient storm ponding.
+                  </p>
+                  <div class="sat-meta-grid">
+                    <div><span class="meta-lbl">Permanent Baseline:</span> <strong>4.25 km² (Canals &amp; Tanks)</strong></div>
+                    <div><span class="meta-lbl">Storm Ponding:</span> <strong style="color:var(--accent-warning);" id="satStormPonding">-- km²</strong></div>
+                    <div><span class="meta-lbl">Peak Stagnation:</span> <strong style="color:var(--accent-danger);" id="satPeakStagnation">-- cm</strong></div>
+                    <div><span class="meta-lbl">Data Provenance:</span> <strong id="satDataProv">Live Multi-API Fused</strong></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+                 SECTION 2 & 4: GMC WARD-WISE WATERLOGGING & TERRAIN CONSTRAINTS
+                 ============================================================== -->
+            <div class="wl-section-block">
+              <div class="section-title-row">
+                <div class="section-title-left">
+                  <span class="section-num">02</span>
+                  <h3 class="section-heading">GMC Ward-Wise Waterlogging &amp; Terrain Susceptibility</h3>
+                </div>
+                <span class="page-badge">SRTM 30m DEM &bull; 57 Wards Evaluated &bull; GIS Drainage Proximity</span>
+              </div>
+
+              <!-- Ward Selector & Search Bar -->
+              <div class="ward-selector-row">
+                <div class="ward-search-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="wlWardSearchInput" placeholder="Search any of 57 GMC Wards (e.g., Brodipet, Arundelpet, Old Guntur, Kothapet)...">
+                </div>
+                <select id="wlWardSelectDropdown" class="ward-select-dropdown">
+                  <option value="">-- Jump to Ward (1 to 57) --</option>
+                </select>
+              </div>
+
+              <!-- Deep Dive Telemetry Card for Selected Ward (6 Categories Ward ML Risk Inspector) -->
+              <div class="ward-deep-dive-card" id="wlWardDeepDiveCard">
+                <!-- Inspector Header -->
+                <div class="deep-dive-header">
+                  <div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <h4 class="deep-dive-ward-title" id="wlDeepDiveName">Ward No. 4: Brodipet West</h4>
+                      <span class="badge-status-pill" id="wlDeepDiveProvBadge" style="font-size:10px;">LIVE API</span>
+                    </div>
+                    <span class="deep-dive-sub" id="wlDeepDiveSub">
+                      GMC 57-Ward Delimitation Edition (Pre-76 Ward Gazetted Delimitation, Roc No. 997422/2026/G1) &bull; Lat: 16.302, Lon: 80.428
+                    </span>
+                  </div>
+                  <div class="deep-dive-risk-pill" id="wlDeepDiveRiskPill">
+                    <span class="pulse-dot"></span> <span id="wlDeepDiveRiskText">HIGH RISK</span>
+                  </div>
+                </div>
+
+                <!-- 6 Comprehensive Categories Grid -->
+                <div class="inspector-six-categories-grid">
+                  
+                  <!-- Category 1: Ward Information -->
+                  <div class="category-block">
+                    <div class="category-header">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span>1. Ward Information</span>
+                    </div>
+                    <div class="cat-field-row"><span class="cat-k">Ward ID:</span> <strong class="cat-v" id="inspWardId">4</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Official Name:</span> <strong class="cat-v" id="inspOfficialName">Ward No. 4</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Locality:</span> <strong class="cat-v" id="inspLocality">Brodipet West</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Boundary:</span> <span class="cat-v text-cyan" id="inspBoundaryVersion" style="font-size:10px;">GMC 57-Ward Delimitation Edition</span></div>
+                    <div class="cat-field-row"><span class="cat-k">Area:</span> <strong class="cat-v" id="inspArea">1.90 km²</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Population:</span> <strong class="cat-v" id="inspPop">28,900 (GMC Baseline)</strong></div>
+                  </div>
+
+                  <!-- Category 2: Weather Information -->
+                  <div class="category-block">
+                    <div class="category-header">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><line x1="8" y1="19" x2="8" y2="22"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="16" y1="19" x2="16" y2="22"/></svg>
+                      <span>2. Weather Information</span>
+                    </div>
+                    <div class="cat-field-row"><span class="cat-k">Temperature:</span> <strong class="cat-v" id="inspTemp">26.3 °C</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Current 1h Rain:</span> <strong class="cat-v" id="inspRain1h">2.0 mm</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Previous 6h Rain:</span> <strong class="cat-v" id="inspRain6h">7.5 mm</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Previous 24h Rain:</span> <strong class="cat-v text-highlight" id="inspRain24h">42.0 mm</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Forecast 24h Rain:</span> <strong class="cat-v" id="inspRainForecast">0.0 mm</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Humidity / Wind:</span> <strong class="cat-v" id="inspHumidityWind">94.0% &bull; 4.8 km/h</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Source / Updated:</span> <span class="cat-v" id="inspWeatherSource" style="font-size:10px;">Open-Meteo &bull; LIVE</span></div>
+                  </div>
+
+                  <!-- Category 3: Terrain Information -->
+                  <div class="category-block">
+                    <div class="category-header">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                      <span>3. Terrain Information</span>
+                    </div>
+                    <div class="cat-field-row"><span class="cat-k">Mean Elevation:</span> <strong class="cat-v text-highlight" id="inspMeanElev">27.1 m MSL</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Elevation Range:</span> <strong class="cat-v" id="inspElevRange">24.3 m &ndash; 29.6 m</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Mean Slope:</span> <strong class="cat-v" id="inspMeanSlope">1.3° (Depression)</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Low-Lying Area:</span> <strong class="cat-v" id="inspLowLyingPct">24.7% of Ward</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">DEM Source:</span> <span class="cat-v" id="inspDEMSource" style="font-size:10px;">NASA SRTM 30m (1-Arcsecond)</span></div>
+                    <div class="cat-field-row"><span class="cat-k">Gravity Runoff:</span> <strong class="cat-v text-warning" id="inspRunoffPotential">Low Gradient Stagnation</strong></div>
+                  </div>
+
+                  <!-- Category 4: Drainage Information -->
+                  <div class="category-block">
+                    <div class="category-header">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2v20M7 7l10 10M17 7L7 17"/></svg>
+                      <span>4. Drainage Information</span>
+                    </div>
+                    <div class="cat-field-row"><span class="cat-k">Nearest Drain Dist:</span> <strong class="cat-v text-highlight" id="inspDrainDist">180.0 m</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Nearest Waterway:</span> <strong class="cat-v" id="inspDrainName" style="font-size:11px;">Western Krishna Delta Canal</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Network Length:</span> <strong class="cat-v" id="inspDrainLength">2.57 km</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Drainage Density:</span> <strong class="cat-v" id="inspDrainDensity">1.35 km/km²</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Condition Status:</span> <span class="badge-status-pill pill-yellow" id="inspDrainCondition" style="font-size:10px;">Estimated (Proximity Baseline)</span></div>
+                    <div class="cat-field-row" style="margin-top:2px;"><span class="cat-k">Telemetry Note:</span> <span class="cat-v text-muted" id="inspDrainNote" style="font-size:10px; line-height:1.2;">Hydraulic capacity unverified &bull; Proximity does not prove blockage</span></div>
+                  </div>
+
+                  <!-- Category 5: Satellite Water Detection -->
+                  <div class="category-block">
+                    <div class="category-header">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+                      <span>5. Satellite Water Detection</span>
+                    </div>
+                    <div class="cat-field-row"><span class="cat-k">Acquisition Date:</span> <strong class="cat-v" id="inspSatDate">28 Sep 2026, 06:14 UTC</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Radar Sensor:</span> <strong class="cat-v" id="inspSatSensor">Sentinel-1 C-SAR (10m GRD)</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Water Extent:</span> <strong class="cat-v text-cyan" id="inspSatWaterArea">0.38 km²</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Water Coverage:</span> <strong class="cat-v" id="inspSatWaterPct">20.0% of Ward Area</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Confidence:</span> <strong class="cat-v" id="inspSatConfidence" style="color:var(--accent-teal);">92.4% Specular Backscatter</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Processing Status:</span> <span class="cat-v" id="inspSatProcessing" style="font-size:10px;">Calibrated Sigma0 (dB) &bull; Terrain Corrected</span></div>
+                  </div>
+
+                  <!-- Category 6: AI/ML Results -->
+                  <div class="category-block highlight-ai">
+                    <div class="category-header">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                      <span>6. AI/ML Prediction Results</span>
+                    </div>
+                    <div class="cat-field-row"><span class="cat-k">Inundation Probability:</span> <strong class="cat-v text-highlight" id="inspModelProb" style="font-size:14px;">78.4%</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Predicted Risk Tier:</span> <span class="badge-status-pill pill-high" id="inspModelRiskTier">HIGH RISK</span></div>
+                    <div class="cat-field-row"><span class="cat-k">Model Pipeline:</span> <span class="cat-v" id="inspModelName" style="font-size:10px;">waterlogging.pkl (Tuned Random Forest)</span></div>
+                    <div class="cat-field-row"><span class="cat-k">Feature Completeness:</span> <strong class="cat-v text-emerald" id="inspModelCompleteness">100% (30/30 features)</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Decision Threshold:</span> <strong class="cat-v" id="inspModelThreshold">0.36 (Calibrated Alert Cutoff)</strong></div>
+                    <div class="cat-field-row"><span class="cat-k">Prediction Confidence:</span> <strong class="cat-v" id="inspModelConfidence">92.4% Margin</strong></div>
+                  </div>
+
+                </div>
+
+                <!-- Contributing Factors & Evidence-Based Advisory -->
+                <div class="deep-dive-details-row">
+                  <div class="factors-col">
+                    <div class="details-heading">Important Contributing Factors:</div>
+                    <ul class="factors-list" id="wlDeepDiveFactors">
+                      <li>Low-lying central basin depression (27.1m MSL) hindering gravity outflow</li>
+                      <li>Flat terrain slope (1.3°) with minimal gravitational velocity</li>
+                      <li>24h antecedent rainfall accumulation (42.0 mm) saturating topsoil</li>
+                      <li>Nearest mapped waterway: Western Krishna Delta Branch Canal (180m)</li>
+                    </ul>
+                  </div>
+                  <div class="advisory-col">
+                    <div class="details-heading">Municipal Action Advisory:</div>
+                    <div class="advisory-box" id="wlDeepDiveAdvisory">
+                      AI-Generated Advisory Suggestion (Requires Field Verification): Elevated runoff accumulation potential in Brodipet West due to low surface gradient (1.3°) and 42.0mm 24h precipitation. Recommend municipal field crew inspect culvert inlets along 4th Line commercial corridor before deploying dewatering assets.
+                    </div>
+                    <div class="infra-box" id="wlDeepDiveInfra">
+                      <strong>Nearby Critical Infrastructure:</strong> Brodipet 4th Line Commercial Corridor &amp; Sluice Gate 2
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+                 SECTION 3: RAINFALL AND WATERLOGGING TRENDS
+                 ============================================================== -->
+            <div class="wl-section-block">
+              <div class="section-title-row">
+                <div class="section-title-left">
+                  <span class="section-num">03</span>
+                  <h3 class="section-heading">Rainfall and Waterlogging Trends</h3>
+                </div>
+                <span class="page-badge">Open-Meteo High-Resolution Ensemble &bull; Chronological Comparison</span>
+              </div>
+
+              <div class="trends-grid-layout">
+                <!-- Rainfall Accumulation Cards -->
+                <div class="trend-stat-card">
+                  <span class="trend-lbl">Last 1 Hour Rainfall</span>
+                  <span class="trend-num" id="trendRain1h">2.0 mm</span>
+                  <span class="trend-sub">Live Open-Meteo Doppler</span>
+                </div>
+                <div class="trend-stat-card highlight-cyan">
+                  <span class="trend-lbl">Last 24 Hours Total</span>
+                  <span class="trend-num" id="trendRain24h">42.0 mm</span>
+                  <span class="trend-sub">Saturated soil threshold</span>
+                </div>
+                <div class="trend-stat-card">
+                  <span class="trend-lbl">Last 48 Hours Accumulation</span>
+                  <span class="trend-num" id="trendRain48h">42.0 mm</span>
+                  <span class="trend-sub">Multi-window persistence</span>
+                </div>
+                <div class="trend-stat-card">
+                  <span class="trend-lbl">Next 24h Forecast</span>
+                  <span class="trend-num" id="trendForecast24h">0.0 mm</span>
+                  <span class="trend-sub">Ensemble weather model</span>
+                </div>
+                <div class="trend-stat-card">
+                  <span class="trend-lbl">7-Day Cumulative</span>
+                  <span class="trend-num" id="trendRain7d">33.5 mm</span>
+                  <span class="trend-sub">Weekly antecedent baseline</span>
+                </div>
+              </div>
+
+              <!-- Historical Flood Benchmarks Table -->
+              <div class="historical-benchmarks-card">
+                <div class="hist-card-header">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span>Historical Waterlogging Benchmark Events (GMC Dataset)</span>
+                </div>
+                <div class="table-responsive-wrapper">
+                  <table class="wl-mini-table">
+                    <thead>
+                      <tr>
+                        <th>Disaster / Weather Event</th>
+                        <th>Period</th>
+                        <th>24h Rainfall</th>
+                        <th>Inundated Wards</th>
+                        <th>Peak Stagnation Depth</th>
+                        <th>Severity Tier</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Cyclone Roanu</strong></td>
+                        <td>May 2016</td>
+                        <td>112.4 mm</td>
+                        <td>42 Wards</td>
+                        <td>85 cm</td>
+                        <td><span class="badge-status-pill pill-high">High</span></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Cyclone Nivar</strong></td>
+                        <td>Oct 2020</td>
+                        <td>145.2 mm</td>
+                        <td>49 Wards</td>
+                        <td>110 cm</td>
+                        <td><span class="badge-status-pill pill-high">Critical</span></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Monsoon Inundation</strong></td>
+                        <td>Jul 2024</td>
+                        <td>68.0 mm</td>
+                        <td>28 Wards</td>
+                        <td>55 cm</td>
+                        <td><span class="badge-status-pill pill-medium">Moderate</span></td>
+                      </tr>
+                      <tr class="active-row">
+                        <td><strong>Current Monitored Pipeline</strong></td>
+                        <td>Sep 2026</td>
+                        <td id="histCurrRain">42.0 mm</td>
+                        <td id="histCurrWards">Wards Active</td>
+                        <td id="histCurrDepth">-- cm</td>
+                        <td><span class="badge-status-pill pill-low" id="histCurrSeverity">Low</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+                 SECTION 5 & 6: AI/ML PREDICTION - ALL 57 GMC WARDS DETAILED TABLE
+                 ============================================================== -->
+            <div class="wl-section-block">
+              <div class="section-title-row">
+                <div class="section-title-left">
+                  <span class="section-num">04</span>
+                  <h3 class="section-heading">GMC 57-Ward Waterlogging AI Prediction Matrix</h3>
+                </div>
+                <span class="page-badge">waterlogging.pkl (Tuned Random Forest Pipeline &bull; 30 Features)</span>
+              </div>
+
+              <!-- Table Filter and Status Bar -->
+              <div class="table-filter-bar">
+                <div class="filter-pill-group">
+                  <button class="table-filter-pill active" data-filter="all" type="button">All Wards (<span id="tblCountAll">57</span>)</button>
+                  <button class="table-filter-pill" data-filter="severe" type="button" style="color:#f87171;">Severe Risk (&ge; 60%)</button>
+                  <button class="table-filter-pill" data-filter="high" type="button" style="color:#fb923c;">High Risk (36% &ndash; 59%)</button>
+                  <button class="table-filter-pill" data-filter="moderate" type="button" style="color:#fbbf24;">Moderate Risk (20% &ndash; 35%)</button>
+                  <button class="table-filter-pill" data-filter="low" type="button" style="color:#34d399;">Low Risk (&lt; 20%)</button>
+                </div>
+                <div class="table-status-note">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  Calibrated Decision Threshold: <strong>0.36</strong> &bull; Click any ward row to center GIS satellite map
+                </div>
+              </div>
+
+              <!-- Full 57-Ward Results Table -->
+              <div class="full-table-wrapper">
+                <table class="wl-data-table" id="wl57WardsTable">
+                  <thead>
+                    <tr>
+                      <th class="sortable" data-sort="id">Ward ID ↕</th>
+                      <th class="sortable" data-sort="name">Ward Name ↕</th>
+                      <th class="sortable" data-sort="rain">Rainfall (mm) ↕</th>
+                      <th class="sortable" data-sort="elev">Elevation (m) ↕</th>
+                      <th class="sortable" data-sort="slope">Slope (°) ↕</th>
+                      <th class="sortable" data-sort="drain">Drainage Proximity (m) ↕</th>
+                      <th class="sortable" data-sort="area">Water Extent (km²) ↕</th>
+                      <th class="sortable" data-sort="prob">Predicted Risk (%) ↕</th>
+                      <th>Risk Level</th>
+                      <th>Data Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wl57WardsTbody">
+                    <!-- Populated dynamically with all 57 GMC wards -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- ==============================================================
+                 SECTION 7: ALERTS AND CRITICAL INFRASTRUCTURE HOTSPOTS
+                 ============================================================== -->
+            <div class="wl-section-block">
+              <div class="section-title-row">
+                <div class="section-title-left">
+                  <span class="section-num">05</span>
+                  <h3 class="section-heading">Alerts &amp; Critical Infrastructure Hotspots</h3>
+                </div>
+                <span class="page-badge">GIS Roadway, Railway &amp; Culvert Vulnerability Watch</span>
+              </div>
+
+              <div class="alerts-infra-grid" id="wlAlertsInfraGrid">
+                <!-- Dynamically populated with High-Risk Wards, Newly Detected Water, and Potentially Affected Roads -->
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+      </main>
+    </div>
+
+
+
+    <!-- ======================================================================
+         4. EXECUTIVE ANALYSIS REPORT MODAL
+         ====================================================================== -->
+    <div id="analysisModalOverlay" class="analysis-modal-overlay">
+      <div class="analysis-modal-dialog">
+        <button id="modalCloseBtn" class="modal-close-btn" type="button">&times;</button>
+        <h3 id="analysisModalTitle" style="font-family:var(--font-display); font-size:20px; font-weight:700; color:var(--text-white); margin-bottom:16px;">
+          Executive Risk Report
+        </h3>
+        <div id="analysisModalBody">
+          <!-- Dynamic Content loaded from backend API -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Three.js (3D WebGL Library for Earth & Satellite Visuals) -->
+  <script src="/static/js/three.min.js"></script>
+
+  <!-- Leaflet GIS Map Library -->
+  <script src="/static/js/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- GMC GIS Intelligence Data (57 Wards, Drainage Network, Hotspots) -->
+  <script src="/static/js/chart.min.js"></script>
+  <script src="/static/js/guntur_data.js"></script>
+
+  <!-- 3D Earth Globe Visual Logic -->
+  <script src="/static/js/earth_3d.js"></script>
+
+  <!-- Core Application Controller -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

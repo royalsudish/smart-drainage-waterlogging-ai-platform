@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" fill="none">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#020817" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#051937" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0a2a5e" stop-opacity="0.7"/>
+    </linearGradient>
+    <linearGradient id="mountainBack" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a5f" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0c2340" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="mountainFront" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#134e4a"/>
+      <stop offset="60%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+    <linearGradient id="waterFlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.7"/>
+      <stop offset="40%" stop-color="#00f0ff" stop-opacity="0.9"/>
+      <stop offset="70%" stop-color="#0369a1" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.75"/>
+    </linearGradient>
+    <linearGradient id="forestCanopy" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#15803d"/>
+      <stop offset="60%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#052e16"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="320" fill="url(#skyGrad)"/>
+
+  <!-- Distant Blue Mountains Silhouettes -->
+  <path d="M 0 160 L 90 120 L 220 170 L 360 110 L 520 175 L 680 100 L 850 165 L 1020 90 L 1150 150 L 1200 135 L 1200 320 L 0 320 Z" 
+        fill="url(#mountainBack)"/>
+
+  <!-- Mid-Ground Ridges with Mist -->
+  <path d="M 0 185 Q 150 150, 320 190 T 700 180 T 1100 170 L 1200 180 L 1200 320 L 0 320 Z" 
+        fill="#083344" opacity="0.85"/>
+
+  <!-- Serene River/Water Body Meandering across the landscape -->
+  <path d="M 200 240 C 350 215, 600 250, 800 230 C 950 215, 1100 240, 1200 235 L 1200 280 C 1050 285, 850 270, 700 285 C 500 300, 320 270, 200 280 Z" 
+        fill="url(#waterFlow)"/>
+  <!-- River Reflections -->
+  <path d="M 280 250 Q 420 238, 560 252" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <path d="M 680 245 Q 850 235, 980 248" stroke="#bae6fd" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Rolling Lush Green Hills & Trees in Foreground -->
+  <path d="M 0 230 Q 140 190, 280 240 T 600 230 T 900 245 T 1200 220 L 1200 320 L 0 320 Z" 
+        fill="url(#forestCanopy)"/>
+
+  <!-- Detailed Forest Tree Clusters -->
+  <g fill="#166534" opacity="0.9">
+    <ellipse cx="60" cy="225" rx="30" ry="20"/>
+    <ellipse cx="120" cy="235" rx="40" ry="22"/>
+    <ellipse cx="200" cy="245" rx="35" ry="18"/>
+    <ellipse cx="450" cy="240" rx="45" ry="22"/>
+    <ellipse cx="550" cy="235" rx="40" ry="20"/>
+    <ellipse cx="820" cy="250" rx="50" ry="25"/>
+    <ellipse cx="940" cy="240" rx="40" ry="20"/>
+    <ellipse cx="1060" cy="230" rx="45" ry="22"/>
+    <ellipse cx="1150" cy="225" rx="35" ry="18"/>
+  </g>
+
+  <!-- Lighter Tree Tops -->
+  <g fill="#22c55e" opacity="0.75">
+    <ellipse cx="70" cy="220" rx="20" ry="12"/>
+    <ellipse cx="130" cy="230" rx="25" ry="14"/>
+    <ellipse cx="460" cy="235" rx="28" ry="14"/>
+    <ellipse cx="830" cy="245" rx="30" ry="15"/>
+    <ellipse cx="950" cy="235" rx="25" ry="12"/>
+    <ellipse cx="1070" cy="225" rx="28" ry="14"/>
+  </g>
+
+  <!-- Atmospheric Glow along bottom border -->
+  <rect x="0" y="280" width="1200" height="40" fill="#020817" opacity="0.7"/>
+</svg>
+
