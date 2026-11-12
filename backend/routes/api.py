@@ -27,8 +27,10 @@ DISTRICT_COORDS = {
     "Parvathipuram Manyam": (18.7758, 83.4276),
     "Anakapalli": (17.6896, 83.0033),
 }
+import json
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from flask import Blueprint, request, jsonify
 from backend.utils.response import ok, fail
@@ -1496,56 +1498,39 @@ def gmc_ward_predictions_route():
         return fail("Failed to evaluate GMC ward predictions", 500, str(exc))
 
 
-@api_bp.route("/gmc/wards.geojson", methods=["GET"])
-def gmc_wards_geojson_route():
+_STATIC_DATA_DIR = Path(__file__).resolve().parents[2] / "frontend" / "static" / "data"
+
+
+def _load_static_geojson(filename: str, label: str):
+    """Load a static GeoJSON file anchored to the repository root directory."""
     try:
-        import json, os
-        geojson_path = "frontend/static/data/gmc_57_wards.geojson"
-        if os.path.exists(geojson_path):
+        geojson_path = _STATIC_DATA_DIR / filename
+        if geojson_path.is_file():
             with open(geojson_path, "r", encoding="utf-8") as f:
                 return jsonify(json.load(f))
-        return fail("GMC Wards GeoJSON not found", 404)
+        return fail(f"{label} GeoJSON not found", 404)
     except Exception as exc:
-        return fail("Failed to load GMC Wards GeoJSON", 500, str(exc))
+        return fail(f"Failed to load {label} GeoJSON", 500, str(exc))
+
+
+@api_bp.route("/gmc/wards.geojson", methods=["GET"])
+def gmc_wards_geojson_route():
+    return _load_static_geojson("gmc_57_wards.geojson", "GMC Wards")
 
 
 @api_bp.route("/gis/india.geojson", methods=["GET"])
 def gis_india_geojson_route():
-    try:
-        import json, os
-        geojson_path = "frontend/static/data/india_states.geojson"
-        if os.path.exists(geojson_path):
-            with open(geojson_path, "r", encoding="utf-8") as f:
-                return jsonify(json.load(f))
-        return fail("India States GeoJSON not found", 404)
-    except Exception as exc:
-        return fail("Failed to load India States GeoJSON", 500, str(exc))
+    return _load_static_geojson("india_states.geojson", "India States")
 
 
 @api_bp.route("/gis/andhra-pradesh.geojson", methods=["GET"])
 def gis_ap_geojson_route():
-    try:
-        import json, os
-        geojson_path = "frontend/static/data/andhra_pradesh.geojson"
-        if os.path.exists(geojson_path):
-            with open(geojson_path, "r", encoding="utf-8") as f:
-                return jsonify(json.load(f))
-        return fail("Andhra Pradesh GeoJSON not found", 404)
-    except Exception as exc:
-        return fail("Failed to load Andhra Pradesh GeoJSON", 500, str(exc))
+    return _load_static_geojson("andhra_pradesh.geojson", "Andhra Pradesh")
 
 
 @api_bp.route("/gis/guntur-district.geojson", methods=["GET"])
 def gis_guntur_district_geojson_route():
-    try:
-        import json, os
-        geojson_path = "frontend/static/data/guntur_district.geojson"
-        if os.path.exists(geojson_path):
-            with open(geojson_path, "r", encoding="utf-8") as f:
-                return jsonify(json.load(f))
-        return fail("Guntur District GeoJSON not found", 404)
-    except Exception as exc:
-        return fail("Failed to load Guntur District GeoJSON", 500, str(exc))
+    return _load_static_geojson("guntur_district.geojson", "Guntur District")
 
 
 @api_bp.route("/gmc/ward/<int:ward_id>", methods=["GET"])
