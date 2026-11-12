@@ -172,3 +172,4 @@ curl "http://127.0.0.1:5000/api/models/status?load=1"
 2. **Environment Configuration**: Inject `.env` variables securely through your hosting platform's secret manager (`FLASK_DEBUG=0`, `FIRMS_MAP_KEY`, `SMTP_*`, `ALERT_DB_PATH`).
 3. **Persistent Storage**: Mount a persistent volume for `data/` if retaining runtime SQLite telemetry snapshots (`water_intelligence.db`) and alert logs (`alerts.db`) across container restarts.
 4. **External API Rate Limits**: Set `APP_USER_AGENT` and `APP_CONTACT_EMAIL` appropriately when querying Nominatim/Overpass in production.
+
